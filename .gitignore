@@ -24,3 +24,5 @@ ext/polarssl/mkmf.log
 ext/polarssl/polarssl.bundle
 
 ext/polarssl/polarssl.o
+
+ext/polarssl/Makefile
