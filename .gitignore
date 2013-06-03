@@ -18,3 +18,9 @@ _yardoc
 doc/
 
 .DS_Store
+
+ext/polarssl/mkmf.log
+
+ext/polarssl/polarssl.bundle
+
+ext/polarssl/polarssl.o
