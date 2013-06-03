@@ -1,3 +1,7 @@
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-getinstall -qq libpolarssl-dev
+
 language: ruby
 rvm:
   - "1.9.2"
