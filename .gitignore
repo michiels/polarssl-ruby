@@ -26,3 +26,5 @@ ext/polarssl/polarssl.bundle
 ext/polarssl/polarssl.o
 
 ext/polarssl/Makefile
+
+lib/polarssl

@@ -3,6 +3,19 @@ polarssl-ruby
 
 Use PolarSSL in your Rubies. Ruby wrapper for the PolarSSL cryptographic and SSL/TLS library.
 
+Development
+===========
+
+The following steps and commands are followed during development:
+
+1. A branch is created.
+2. Tests are created in `test/` before code is written and ran with `rake test`. This rake task takes care of compiling the binary and executing the tests.
+3. Code is written.
+4. A pull request is created.
+5. CI runs and verifies passing tests of the Pull Request.
+6. The pull request is merged in.
+5. Repeat for every feature change or bug fix.
+
 License
 =======
 
