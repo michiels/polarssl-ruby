@@ -33,7 +33,7 @@ The following steps and commands are followed during development:
 Tools used when developing:
 
 * Vagrant CI (http://vagrant-ci.org)
-* MiniTest (built into Ruby)
+* MiniTest (built into Ruby 1.9 or newer)
 * GitHub
 
 License
