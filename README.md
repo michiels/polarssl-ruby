@@ -6,6 +6,20 @@ Use PolarSSL in your Rubies. Ruby wrapper for the PolarSSL cryptographic and SSL
 Development
 ===========
 
+Install PolarSSL from source via https://polarssl.org/download or install it using your operating system. For example:
+
+On Ubuntu:
+
+```
+sudo apt-get install libpolarssl-dev
+```
+
+On Mac OS X with [Homebrew](http://mxcl.github.io/homebrew/):
+
+```
+brew install polarssl
+```
+
 The following steps and commands are followed during development:
 
 1. A branch is created.
