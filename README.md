@@ -28,7 +28,7 @@ The following steps and commands are followed during development:
 4. A pull request is created.
 5. CI runs and verifies passing tests of the Pull Request.
 6. The pull request is merged in.
-5. Repeat for every feature change or bug fix.
+7. Repeat.
 
 Tools used when developing:
 
