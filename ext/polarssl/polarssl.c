@@ -1,6 +1,10 @@
-#include <ruby.h>
+#include <polarssl.h>
+
+VALUE mPolarSSL;
 
 void Init_polarssl(void)
 {
-  VALUE mPolarSSL = rb_define_module("PolarSSL");
+  mPolarSSL = rb_define_module("PolarSSL");
+
+  Init_entropy_context();
 }
