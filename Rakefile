@@ -14,7 +14,7 @@ end
 
 task test: "lib/#{NAME}/#{NAME}.#{DLEXT}"
 
-CLEAN.include("ext/**/*{.o,.log,.#{DLEXT}")
+CLEAN.include("ext/**/*{.o,.log,.#{DLEXT}}")
 CLEAN.include("ext/**/Makefile")
 CLOBBER.include("lib/**/*.#{DLEXT}")
 
