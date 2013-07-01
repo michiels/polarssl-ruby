@@ -1,8 +1,11 @@
 require_relative 'test_helper'
+require 'socket'
 
-class SSLConnectionTest < MiniTest::Unit::Testcase
+class SSLConnectionTest < MiniTest::Unit::TestCase
 
   def test_simple_connection
+    socket = TCPSocket.new('polarssl.org', 443)
+
     entropy = PolarSSL::EntropyContext.new
 
     ctr_drbg = PolarSSL::CtrDrbg.new(entropy, "seed string")
@@ -22,6 +25,8 @@ class SSLConnectionTest < MiniTest::Unit::Testcase
     ssl.read(1024)
 
     ssl.close_notify
+
+    socket.close
 
     ssl.close
   end
