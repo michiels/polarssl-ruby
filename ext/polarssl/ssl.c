@@ -1,11 +1,13 @@
 #include "polarssl.h"
 #include "polarssl/ssl.h"
 #include "polarssl/ctr_drbg.h"
+#include "ruby/io.h"
 
 static VALUE R_ssl_set_endpoint();
 static VALUE R_ssl_allocate();
 static VALUE R_ssl_set_authmode();
 static VALUE R_ssl_set_rng();
+static VALUE R_ssl_set_bio();
 
 void Init_ssl()
 {
@@ -18,6 +20,7 @@ void Init_ssl()
   rb_define_method(cSSL, "set_endpoint", R_ssl_set_endpoint, 1);
   rb_define_method(cSSL, "set_authmode", R_ssl_set_authmode, 1);
   rb_define_method(cSSL, "set_rng", R_ssl_set_rng, 1);
+  rb_define_method(cSSL, "set_bio", R_ssl_set_bio, 4);
 }
 
 static VALUE R_ssl_allocate(VALUE klass)
@@ -62,6 +65,22 @@ static VALUE R_ssl_set_rng(VALUE self, VALUE rng)
   Data_Get_Struct(rng, ctr_drbg_context, ctr_drbg);
 
   ssl_set_rng(ssl, ctr_drbg_random, ctr_drbg);
+
+  return self;
+}
+
+static VALUE R_ssl_set_bio(VALUE self, VALUE recv_func, VALUE input_socket, VALUE send_func, VALUE output_socket)
+{
+  Check_Type(input_socket, T_FILE);
+  Check_Type(output_socket, T_FILE);
+
+  ssl_context *ssl;
+  Data_Get_Struct(self, ssl_context, ssl);
+
+  rb_io_t *fptr;
+  GetOpenFile(input_socket, fptr);
+
+  ssl_set_bio(ssl, net_recv, &fptr->fd, net_send, &fptr->fd);
 
   return self;
 }
