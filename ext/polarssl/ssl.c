@@ -125,7 +125,11 @@ static VALUE R_ssl_write(VALUE self, VALUE string)
   ssl_context *ssl;
   Data_Get_Struct(self, ssl_context, ssl);
 
-  ssl_write(ssl, RSTRING_PTR(string), RSTRING_LEN(string));
+  char *buffer;
+
+  buffer = RSTRING_PTR(string);
+
+  ssl_write(ssl, (const unsigned char *) buffer, RSTRING_LEN(string));
 
   return Qtrue;
 }
