@@ -8,7 +8,7 @@ class EntropyTest < MiniTest::Unit::TestCase
 
   def test_gather
     entropy = PolarSSL::Entropy.new
-    entropy.gather()
+    assert entropy.gather()
   end
 
 end
