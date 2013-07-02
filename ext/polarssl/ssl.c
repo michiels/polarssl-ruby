@@ -145,14 +145,18 @@ static VALUE R_ssl_read(VALUE self, VALUE length)
   VALUE result;
 
   int buffer_size;
-
   buffer_size = NUM2INT(length);
 
   char buffer[buffer_size];
 
-  ssl_read(ssl, (unsigned char *) buffer, buffer_size - 1);
+  int len;
+  len = ssl_read(ssl, (unsigned char *) buffer, buffer_size - 1);
 
-  result = rb_str_new2(buffer);
+  if (len <= 0) {
+    result = Qnil;
+  } else {
+    result = rb_tainted_str_new2(buffer);
+  }
 
   return result;
 }
