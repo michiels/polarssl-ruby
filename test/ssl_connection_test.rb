@@ -16,7 +16,7 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
     ssl.set_authmode(PolarSSL::SSL::SSL_VERIFY_NONE)
     ssl.set_rng(ctr_drbg)
 
-    ssl.set_bio(Proc.new { |fp| }, fp, Proc.new { |fp| }, fp)
+    ssl.set_bio(Proc.new { |fp| }, socket, Proc.new { |fp| }, socket)
 
     ssl.handshake
 
