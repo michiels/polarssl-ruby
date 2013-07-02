@@ -12,7 +12,7 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
 
     ssl = PolarSSL::SSL.new
 
-    ssl.set_endpoint(PolarSSL::SSL_IS_CLIENT)
+    ssl.set_endpoint(PolarSSL::SSL::SSL_IS_CLIENT)
     ssl.set_authmode(PolarSSL::SSL_VERIFY_NONE)
     ssl.set_rng(ctr_drbg)
 
