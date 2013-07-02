@@ -155,7 +155,7 @@ static VALUE R_ssl_read(VALUE self, VALUE length)
   if (len <= 0) {
     result = Qnil;
   } else {
-    result = rb_tainted_str_new2(buffer);
+    result = rb_str_new2(buffer);
   }
 
   return result;
