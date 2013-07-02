@@ -22,7 +22,8 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
 
     ssl.write("GET / HTTP/1.0\r\n\r\n")
 
-    ssl.read(1024)
+    result = ssl.read(1024)
+    puts result
 
     ssl.close_notify
 

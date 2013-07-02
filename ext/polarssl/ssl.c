@@ -12,6 +12,7 @@ static VALUE R_ssl_set_rng();
 static VALUE R_ssl_set_bio();
 static VALUE R_ssl_handshake();
 static VALUE R_ssl_write();
+static VALUE R_ssl_read();
 
 void my_debug(void *ctx, int level, const char *str)
 {
@@ -33,6 +34,7 @@ void Init_ssl()
   rb_define_method(cSSL, "set_bio", R_ssl_set_bio, 4);
   rb_define_method(cSSL, "handshake", R_ssl_handshake, 0);
   rb_define_method(cSSL, "write", R_ssl_write, 1);
+  rb_define_method(cSSL, "read", R_ssl_read, 1);
 }
 
 static VALUE R_ssl_allocate(VALUE klass)
@@ -48,7 +50,7 @@ static VALUE R_ssl_initialize(VALUE self)
 
   Data_Get_Struct(self, ssl_context, ssl);
   ssl_init(ssl);
-  ssl_set_dbg(ssl, my_debug, stderr);
+  // ssl_set_dbg(ssl, my_debug, stderr);
 
   return self;
 }
@@ -126,10 +128,31 @@ static VALUE R_ssl_write(VALUE self, VALUE string)
   Data_Get_Struct(self, ssl_context, ssl);
 
   char *buffer;
-
   buffer = RSTRING_PTR(string);
 
   ssl_write(ssl, (const unsigned char *) buffer, RSTRING_LEN(string));
 
   return Qtrue;
+}
+
+static VALUE R_ssl_read(VALUE self, VALUE length)
+{
+  Check_Type(length, T_FIXNUM);
+
+  ssl_context *ssl;
+  Data_Get_Struct(self, ssl_context, ssl);
+
+  VALUE result;
+
+  int buffer_size;
+
+  buffer_size = NUM2INT(length);
+
+  char buffer[buffer_size];
+
+  ssl_read(ssl, (unsigned char *) buffer, buffer_size - 1);
+
+  result = rb_str_new2(buffer);
+
+  return result;
 }
