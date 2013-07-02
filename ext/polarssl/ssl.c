@@ -11,7 +11,12 @@ static VALUE R_ssl_set_authmode();
 static VALUE R_ssl_set_rng();
 static VALUE R_ssl_set_bio();
 static VALUE R_ssl_handshake();
+static VALUE R_ssl_write();
 
+void my_debug(void *ctx, int level, const char *str)
+{
+  fprintf((FILE *)ctx, "%s", str);
+}
 
 void Init_ssl()
 {
@@ -27,6 +32,7 @@ void Init_ssl()
   rb_define_method(cSSL, "set_rng", R_ssl_set_rng, 1);
   rb_define_method(cSSL, "set_bio", R_ssl_set_bio, 4);
   rb_define_method(cSSL, "handshake", R_ssl_handshake, 0);
+  rb_define_method(cSSL, "write", R_ssl_write, 1);
 }
 
 static VALUE R_ssl_allocate(VALUE klass)
@@ -42,6 +48,7 @@ static VALUE R_ssl_initialize(VALUE self)
 
   Data_Get_Struct(self, ssl_context, ssl);
   ssl_init(ssl);
+  ssl_set_dbg(ssl, my_debug, stderr);
 
   return self;
 }
@@ -108,5 +115,17 @@ static VALUE R_ssl_handshake(VALUE self)
 
   ssl_handshake(ssl);
 
-  return self;
+  return Qtrue;
+}
+
+static VALUE R_ssl_write(VALUE self, VALUE string)
+{
+  Check_Type(string, T_STRING);
+
+  ssl_context *ssl;
+  Data_Get_Struct(self, ssl_context, ssl);
+
+  ssl_write(ssl, RSTRING_PTR(string), RSTRING_LEN(string));
+
+  return Qtrue;
 }
