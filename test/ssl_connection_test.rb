@@ -6,7 +6,7 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
   def test_simple_connection
     socket = TCPSocket.new('polarssl.org', 443)
 
-    entropy = PolarSSL::EntropyContext.new
+    entropy = PolarSSL::Entropy.new
 
     ctr_drbg = PolarSSL::CtrDrbg.new(entropy, "seed string")
 
