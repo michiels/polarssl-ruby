@@ -31,6 +31,7 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
 
     socket.close
 
+    # Specifically close SSL context so memory is freed and no-one can read from memory.
     ssl.close
   end
 
