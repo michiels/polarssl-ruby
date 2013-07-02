@@ -16,6 +16,7 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
     ssl.set_authmode(PolarSSL::SSL::SSL_VERIFY_NONE)
     ssl.set_rng(ctr_drbg)
 
+    # TODO: Implement passing methods/procs to people can define their own send/recv methods
     ssl.set_bio(Proc.new { |fp| }, socket, Proc.new { |fp| }, socket)
 
     ssl.handshake
@@ -31,7 +32,7 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
 
     socket.close
 
-    # Specifically close SSL context so memory is freed and no-one can read from memory.
+    # TODO: Specifically close SSL context so memory is freed and no-one can read from memory.
     ssl.close
   end
 
