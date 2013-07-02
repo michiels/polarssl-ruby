@@ -8,7 +8,7 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
 
     entropy = PolarSSL::Entropy.new
 
-    ctr_drbg = PolarSSL::CtrDrbg.new(entropy, "seed string")
+    ctr_drbg = PolarSSL::CtrDrbg.new(entropy)
 
     ssl = PolarSSL::SSL.new
 
