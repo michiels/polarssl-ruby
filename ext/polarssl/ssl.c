@@ -3,6 +3,7 @@
 
 static VALUE R_ssl_set_endpoint();
 static VALUE R_ssl_allocate();
+static VALUE R_ssl_set_authmode();
 
 void Init_ssl()
 {
@@ -13,6 +14,7 @@ void Init_ssl()
 
   rb_define_alloc_func(cSSL, R_ssl_allocate);
   rb_define_method(cSSL, "set_endpoint", R_ssl_set_endpoint, 1);
+  rb_define_method(cSSL, "set_authmode", R_ssl_set_authmode, 1);
 }
 
 static VALUE R_ssl_allocate(VALUE klass)
@@ -30,6 +32,18 @@ static VALUE R_ssl_set_endpoint(VALUE self, VALUE endpoint_mode)
   Data_Get_Struct(self, ssl_context, ssl);
 
   ssl_set_endpoint(ssl, NUM2INT(endpoint_mode));
+
+  return self;
+}
+
+static VALUE R_ssl_set_authmode(VALUE self, VALUE authmode)
+{
+  Check_Type(authmode, T_FIXNUM);
+
+  ssl_context *ssl;
+  Data_Get_Struct(self, ssl_context, ssl);
+
+  ssl_set_authmode(ssl, NUM2INT(authmode));
 
   return self;
 }
