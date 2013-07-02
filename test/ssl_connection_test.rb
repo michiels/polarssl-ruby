@@ -10,7 +10,7 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
 
     ctr_drbg = PolarSSL::CtrDrbg.new(entropy, "seed string")
 
-    ssl = PolarSSL::SSLContext.new
+    ssl = PolarSSL::SSL.new
 
     ssl.set_endpoint(PolarSSL::SSL_IS_CLIENT)
     ssl.set_authmode(PolarSSL::SSL_VERIFY_NONE)

@@ -1,6 +1,7 @@
 #include "ruby.h"
 #include "entropy.h"
 #include "ctr_drbg.h"
+#include "ssl.h"
 
 VALUE mPolarSSL;
 
@@ -10,4 +11,5 @@ void Init_polarssl()
 
   Init_entropy();
   Init_ctr_drbg();
+  Init_ssl();
 }
