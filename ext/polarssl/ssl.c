@@ -8,10 +8,11 @@ void Init_ssl()
 {
   VALUE cSSL = rb_define_class_under(mPolarSSL, "SSL", rb_cObject);
 
+  rb_define_const(cSSL, "SSL_IS_CLIENT", INT2NUM(SSL_IS_CLIENT));
+  rb_define_const(cSSL, "SSL_VERIFY_NONE", INT2NUM(SSL_VERIFY_NONE));
+
   rb_define_alloc_func(cSSL, R_ssl_allocate);
   rb_define_method(cSSL, "set_endpoint", R_ssl_set_endpoint, 1);
-
-  rb_define_const(cSSL, "SSL_IS_CLIENT", INT2NUM(SSL_IS_CLIENT));
 }
 
 static VALUE R_ssl_allocate(VALUE klass)
