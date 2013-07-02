@@ -53,8 +53,7 @@ static VALUE R_ssl_set_endpoint(VALUE self, VALUE endpoint_mode)
   ssl_context *ssl;
   Data_Get_Struct(self, ssl_context, ssl);
 
-  // ssl_set_endpoint(ssl, NUM2INT(endpoint_mode));
-  ssl_set_endpoint(ssl, SSL_IS_CLIENT);
+  ssl_set_endpoint(ssl, NUM2INT(endpoint_mode));
 
   return self;
 }
@@ -66,8 +65,7 @@ static VALUE R_ssl_set_authmode(VALUE self, VALUE authmode)
   ssl_context *ssl;
   Data_Get_Struct(self, ssl_context, ssl);
 
-  // ssl_set_authmode(ssl, NUM2INT(authmode));
-  ssl_set_authmode(ssl, SSL_VERIFY_NONE);
+  ssl_set_authmode(ssl, NUM2INT(authmode));
 
   return self;
 }
