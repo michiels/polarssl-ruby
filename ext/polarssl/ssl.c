@@ -169,7 +169,12 @@ static VALUE R_ssl_write(VALUE self, VALUE string)
   char *buffer;
   buffer = RSTRING_PTR(string);
 
-  ssl_write(ssl, (const unsigned char *) buffer, RSTRING_LEN(string));
+  int ret = ssl_write(ssl, (const unsigned char *) buffer, RSTRING_LEN(string));
+
+  if (ret < 0)
+  {
+    rb_raise(e_SSLError, "-0x%x", -ret);
+  }
 
   return Qtrue;
 }
