@@ -196,8 +196,10 @@ static VALUE R_ssl_read(VALUE self, VALUE length)
   int len;
   len = ssl_read(ssl, (unsigned char *) buffer, buffer_size - 1);
 
-  if (len <= 0) {
+  if (len == 0 || len == POLARSSL_ERR_SSL_PEER_CLOSE_NOTIFY) {
     result = Qnil;
+  } else if (len < 0) {
+    rb_raise(e_SSLError, "-0x%x", -len);
   } else {
     result = rb_str_new2(buffer);
   }
