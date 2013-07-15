@@ -212,7 +212,12 @@ static VALUE R_ssl_close_notify(VALUE self)
   ssl_context *ssl;
   Data_Get_Struct(self, ssl_context, ssl);
 
-  ssl_close_notify(ssl);
+  int ret = ssl_close_notify(ssl);
+
+  if (ret < 0)
+  {
+    rb_raise(e_SSLError, "-0x%x", -ret);
+  }
 
   return Qtrue;
 }
