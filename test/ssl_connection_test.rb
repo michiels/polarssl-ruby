@@ -13,7 +13,7 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
     ssl = PolarSSL::SSL.new
 
     ssl.set_endpoint(PolarSSL::SSL::SSL_IS_CLIENT)
-    ssl.set_authmode(PolarSSL::SSL::SSL_VERIFY_REQUIRED)
+    ssl.set_authmode(PolarSSL::SSL::SSL_VERIFY_NONE)
     ssl.set_rng(ctr_drbg)
 
     # TODO: Implement passing methods/procs to people can define their own send/recv methods
