@@ -14,6 +14,7 @@ static VALUE R_ssl_handshake();
 static VALUE R_ssl_write();
 static VALUE R_ssl_read();
 static VALUE R_ssl_close_notify();
+static VALUE R_close();
 
 void my_debug(void *ctx, int level, const char *str)
 {
@@ -37,6 +38,7 @@ void Init_ssl()
   rb_define_method(cSSL, "write", R_ssl_write, 1);
   rb_define_method(cSSL, "read", R_ssl_read, 1);
   rb_define_method(cSSL, "close_notify", R_ssl_close_notify, 0);
+  rb_define_method(cSSL, "close", R_close, 0);
 }
 
 static VALUE R_ssl_allocate(VALUE klass)
@@ -169,6 +171,16 @@ static VALUE R_ssl_close_notify(VALUE self)
   Data_Get_Struct(self, ssl_context, ssl);
 
   ssl_close_notify(ssl);
+
+  return Qtrue;
+}
+
+static VALUE R_close(VALUE self)
+{
+  ssl_context *ssl;
+  Data_Get_Struct(self, ssl_context, ssl);
+
+  memset(ssl, 0, sizeof(*ssl));
 
   return Qtrue;
 }

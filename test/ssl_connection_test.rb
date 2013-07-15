@@ -21,7 +21,7 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
 
     ssl.handshake
 
-    ssl.write("GET / HTTP/1.1\r\nHost: polarssl.org\r\n\r\n")
+    ssl.write("GET / HTTP/1.0\r\nHost: polarssl.org\r\n\r\n")
 
     while ret = ssl.read(1024)
         puts "==== chunk #{ret.length} ====="

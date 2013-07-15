@@ -3,18 +3,15 @@ polarssl-ruby
 
 Use PolarSSL in your Rubies. Ruby wrapper for the PolarSSL cryptographic and SSL/TLS library.
 
-Ruby Version
-============
+## Ruby Version
 
 Developed on Ruby 2.0.0
 
-PolarSSL Version
-================
+## PolarSSL Version
 
 Developed on PolarSSL 1.2.7
 
-Development
-===========
+## Development
 
 Install PolarSSL from source via https://polarssl.org/download or install it using your operating system. For example:
 
@@ -46,8 +43,7 @@ Tools used when developing:
 * MiniTest (built into Ruby 1.9 or newer)
 * GitHub
 
-License
-=======
+## License
 
 ```
 polar-ssl-ruby - A Ruby extension for using PolarSSL.
