@@ -4,9 +4,9 @@
 #include "polarssl/net.h"
 #include "ruby/io.h"
 
-static VALUE e_MallocFailed;
-static VALUE e_NetWantRead;
-static VALUE e_NetWantWrite;
+VALUE e_MallocFailed;
+VALUE e_NetWantRead;
+VALUE e_NetWantWrite;
 VALUE e_SSLError;
 
 static VALUE R_ssl_allocate();
@@ -28,8 +28,8 @@ void my_debug(void *ctx, int level, const char *str)
 
 extern void Init_ssl()
 {
-  VALUE e_MallocFailed = rb_define_class_under(mPolarSSL, "MallocFailed", rb_eStandardError);
-  VALUE e_NetWantRead = rb_define_class_under(mPolarSSL, "NetWantRead", rb_eStandardError);
+  e_MallocFailed = rb_define_class_under(mPolarSSL, "MallocFailed", rb_eStandardError);
+  e_NetWantRead = rb_define_class_under(mPolarSSL, "NetWantRead", rb_eStandardError);
 
   VALUE cSSL = rb_define_class_under(mPolarSSL, "SSL", rb_cObject);
 
@@ -154,7 +154,6 @@ static VALUE R_ssl_handshake(VALUE self)
     {
       rb_raise(e_SSLError, "-0x%x", -ret);
     }
-    return Qnil;
   } else {
     return Qtrue;
   }
