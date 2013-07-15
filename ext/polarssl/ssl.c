@@ -4,6 +4,10 @@
 #include "polarssl/net.h"
 #include "ruby/io.h"
 
+static VALUE e_MallocFailed;
+static VALUE e_NetWantRead;
+static VALUE e_NetWantWrite;
+
 static VALUE R_ssl_allocate();
 static VALUE R_ssl_initialize();
 static VALUE R_ssl_set_endpoint();
@@ -23,6 +27,9 @@ void my_debug(void *ctx, int level, const char *str)
 
 void Init_ssl()
 {
+  VALUE e_MallocFailed = rb_define_class_under(mPolarSSL, "MallocFailed", rb_eStandardError);
+  VALUE e_NetWantRead = rb_define_class_under(mPolarSSL, "NetWantRead", rb_eStandardError);
+
   VALUE cSSL = rb_define_class_under(mPolarSSL, "SSL", rb_cObject);
 
   rb_define_const(cSSL, "SSL_IS_CLIENT", INT2NUM(SSL_IS_CLIENT));
@@ -53,8 +60,13 @@ static VALUE R_ssl_initialize(VALUE self)
   ssl_context *ssl;
 
   Data_Get_Struct(self, ssl_context, ssl);
-  ssl_init(ssl);
-  ssl_set_dbg(ssl, my_debug, stderr);
+
+  int ret = ssl_init(ssl);
+
+  if (ret == POLARSSL_ERR_SSL_MALLOC_FAILED)
+  {
+    rb_raise(e_MallocFailed, "ssl_init() memory allocation failed.");
+  }
 
   return self;
 }
@@ -119,7 +131,18 @@ static VALUE R_ssl_handshake(VALUE self)
   ssl_context *ssl;
   Data_Get_Struct(self, ssl_context, ssl);
 
-  ssl_handshake(ssl);
+  int ret = ssl_handshake(ssl);
+
+  if (ret != 0) {
+    if (ret == POLARSSL_ERR_NET_WANT_READ)
+    {
+      rb_raise(e_NetWantRead, "ssl_handshake() returned POLARSSL_ERR_NET_WANT_READ");
+    }
+    else if (ret == POLARSSL_ERR_NET_WANT_WRITE)
+    {
+      rb_raise(e_NetWantWrite, "ssl_handshake() returned POLARSSL_ERR_NET_WANT_WRITE");
+    }
+  }
 
   return Qtrue;
 }
@@ -149,7 +172,7 @@ static VALUE R_ssl_read(VALUE self, VALUE length)
   VALUE result;
 
   int buffer_size;
-  buffer_size = NUM2INT(length);
+  buffer_size = NUM2INT(length) - 1;
 
   char buffer[buffer_size];
 

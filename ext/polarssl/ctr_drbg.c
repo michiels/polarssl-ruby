@@ -2,6 +2,8 @@
 #include "polarssl/ctr_drbg.h"
 #include "polarssl/entropy.h"
 
+static VALUE e_EntropySourceFailed;
+
 static VALUE R_ctr_drbg_allocate();
 static VALUE R_ctr_drbg_initialize();
 static VALUE R_ctr_drbg_self_test();
@@ -9,6 +11,7 @@ static VALUE R_ctr_drbg_self_test();
 void Init_ctr_drbg()
 {
   VALUE cCtrDrbg = rb_define_class_under(mPolarSSL, "CtrDrbg", rb_cObject);
+  VALUE e_EntropySourceFailed = rb_define_class_under(mPolarSSL, "EntropySourceFailed", rb_eStandardError);
 
   rb_define_singleton_method(cCtrDrbg, "self_test", R_ctr_drbg_self_test, 0);
 
@@ -31,7 +34,12 @@ static VALUE R_ctr_drbg_initialize(VALUE self, VALUE entropy)
   Data_Get_Struct(self, ctr_drbg_context, ctr_drbg);
   Data_Get_Struct(entropy, entropy_context, entropy_p);
 
-  ctr_drbg_init(ctr_drbg, entropy_func, entropy_p, NULL, 0);
+  int ret = ctr_drbg_init(ctr_drbg, entropy_func, entropy_p, NULL, 0);
+
+  if (ret == POLARSSL_ERR_CTR_DRBG_ENTROPY_SOURCE_FAILED)
+  {
+    rb_raise(e_EntropySourceFailed, "Could not initialize entropy source");
+  }
 
   return self;
 }
