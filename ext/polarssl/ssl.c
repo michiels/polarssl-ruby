@@ -7,6 +7,8 @@
 static VALUE e_MallocFailed;
 static VALUE e_NetWantRead;
 static VALUE e_NetWantWrite;
+static VALUE e_SSL_FeatureUnavailable;
+static VALUE e_SSL_BadInputData;
 
 static VALUE R_ssl_allocate();
 static VALUE R_ssl_initialize();
@@ -46,6 +48,9 @@ void Init_ssl()
   rb_define_method(cSSL, "read", R_ssl_read, 1);
   rb_define_method(cSSL, "close_notify", R_ssl_close_notify, 0);
   rb_define_method(cSSL, "close", R_close, 0);
+
+  VALUE e_SSL_FeatureUnavailable = rb_define_class_under(cSSL, "FeatureUnavailable", rb_eStandardError);
+  VALUE e_SSL_BadInputData = rb_define_class_under(cSSL, "BadInputData", rb_eStandardError);
 }
 
 static VALUE R_ssl_allocate(VALUE klass)
@@ -141,6 +146,14 @@ static VALUE R_ssl_handshake(VALUE self)
     else if (ret == POLARSSL_ERR_NET_WANT_WRITE)
     {
       rb_raise(e_NetWantWrite, "ssl_handshake() returned POLARSSL_ERR_NET_WANT_WRITE");
+    }
+    else if (ret == POLARSSL_ERR_SSL_FEATURE_UNAVAILABLE)
+    {
+      rb_raise(e_SSL_FeatureUnavailable, "POLARSSL_ERR_SSL_FEATURE_UNAVAILABLE: The requested feature is not available");
+    }
+    else if (ret == POLARSSL_ERR_SSL_BAD_INPUT_DATA )
+    {
+      rb_raise(e_SSL_BadInputData, "POLARSSL_ERR_SSL_BAD_INPUT_DATA: Bad input parameters to function.");
     }
   }
 
