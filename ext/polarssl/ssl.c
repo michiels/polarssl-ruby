@@ -7,7 +7,7 @@
 static VALUE e_MallocFailed;
 static VALUE e_NetWantRead;
 static VALUE e_NetWantWrite;
-static VALUE e_SSL_Error;
+VALUE e_SSLError;
 
 static VALUE R_ssl_allocate();
 static VALUE R_ssl_initialize();
@@ -26,15 +26,18 @@ void my_debug(void *ctx, int level, const char *str)
   fprintf((FILE *)ctx, "%s", str);
 }
 
-void Init_ssl()
+extern void Init_ssl()
 {
   VALUE e_MallocFailed = rb_define_class_under(mPolarSSL, "MallocFailed", rb_eStandardError);
   VALUE e_NetWantRead = rb_define_class_under(mPolarSSL, "NetWantRead", rb_eStandardError);
 
   VALUE cSSL = rb_define_class_under(mPolarSSL, "SSL", rb_cObject);
 
+  e_SSLError = rb_define_class_under(cSSL, "Error", rb_eRuntimeError);
+
   rb_define_const(cSSL, "SSL_IS_CLIENT", INT2NUM(SSL_IS_CLIENT));
   rb_define_const(cSSL, "SSL_VERIFY_NONE", INT2NUM(SSL_VERIFY_NONE));
+  rb_define_const(cSSL, "SSL_VERIFY_REQUIRED", INT2NUM(SSL_VERIFY_REQUIRED));
 
   rb_define_alloc_func(cSSL, R_ssl_allocate);
   rb_define_method(cSSL, "initialize", R_ssl_initialize, 0);
@@ -47,8 +50,6 @@ void Init_ssl()
   rb_define_method(cSSL, "read", R_ssl_read, 1);
   rb_define_method(cSSL, "close_notify", R_ssl_close_notify, 0);
   rb_define_method(cSSL, "close", R_close, 0);
-
-  VALUE e_SSL_Error = rb_define_class_under(cSSL, "Error", rb_eStandardError);
 }
 
 static VALUE R_ssl_allocate(VALUE klass)
@@ -70,6 +71,8 @@ static VALUE R_ssl_initialize(VALUE self)
   {
     rb_raise(e_MallocFailed, "ssl_init() memory allocation failed.");
   }
+
+  ssl_set_dbg(ssl, my_debug, stdout);
 
   return self;
 }
@@ -134,24 +137,27 @@ static VALUE R_ssl_handshake(VALUE self)
   ssl_context *ssl;
   Data_Get_Struct(self, ssl_context, ssl);
 
+  VALUE exception;
+
   int ret = ssl_handshake(ssl);
 
-  if (ret != 0) {
+  if (ret < 0) {
     if (ret == POLARSSL_ERR_NET_WANT_READ)
     {
-      rb_raise(e_NetWantRead, "ssl_handshake() returned POLARSSL_ERR_NET_WANT_READ");
+      // rb_raise(e_NetWantRead, "ssl_handshake() returned POLARSSL_ERR_NET_WANT_READ");
     }
     else if (ret == POLARSSL_ERR_NET_WANT_WRITE)
     {
-      rb_raise(e_NetWantWrite, "ssl_handshake() returned POLARSSL_ERR_NET_WANT_WRITE");
+      // rb_raise(e_NetWantWrite, "ssl_handshake() returned POLARSSL_ERR_NET_WANT_WRITE");
     }
     else
     {
-      rb_raise(e_SSL_Error, "ssl_handshake() returned POLARSSL SSL error: %x", ret);
+      rb_raise(e_SSLError, "-0x%x", -ret);
     }
+    return Qnil;
+  } else {
+    return Qtrue;
   }
-
-  return Qtrue;
 }
 
 static VALUE R_ssl_write(VALUE self, VALUE string)
