@@ -144,11 +144,11 @@ static VALUE R_ssl_handshake(VALUE self)
   if (ret < 0) {
     if (ret == POLARSSL_ERR_NET_WANT_READ)
     {
-      // rb_raise(e_NetWantRead, "ssl_handshake() returned POLARSSL_ERR_NET_WANT_READ");
+      rb_raise(e_NetWantRead, "ssl_handshake() returned POLARSSL_ERR_NET_WANT_READ");
     }
     else if (ret == POLARSSL_ERR_NET_WANT_WRITE)
     {
-      // rb_raise(e_NetWantWrite, "ssl_handshake() returned POLARSSL_ERR_NET_WANT_WRITE");
+      rb_raise(e_NetWantWrite, "ssl_handshake() returned POLARSSL_ERR_NET_WANT_WRITE");
     }
     else
     {
