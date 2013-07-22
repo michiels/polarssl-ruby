@@ -86,7 +86,7 @@ static VALUE R_ssl_set_endpoint(VALUE self, VALUE endpoint_mode)
 
   ssl_set_endpoint(ssl, NUM2INT(endpoint_mode));
 
-  return self;
+  return Qtrue;
 }
 
 static VALUE R_ssl_set_authmode(VALUE self, VALUE authmode)
@@ -98,7 +98,7 @@ static VALUE R_ssl_set_authmode(VALUE self, VALUE authmode)
 
   ssl_set_authmode(ssl, NUM2INT(authmode));
 
-  return self;
+  return Qtrue;
 }
 
 static VALUE R_ssl_set_rng(VALUE self, VALUE rng)
@@ -113,7 +113,7 @@ static VALUE R_ssl_set_rng(VALUE self, VALUE rng)
 
   ssl_set_rng(ssl, ctr_drbg_random, ctr_drbg);
 
-  return self;
+  return Qtrue;
 }
 
 static VALUE R_ssl_set_bio(VALUE self, VALUE recv_func, VALUE input_socket, VALUE send_func, VALUE output_socket)
@@ -129,7 +129,7 @@ static VALUE R_ssl_set_bio(VALUE self, VALUE recv_func, VALUE input_socket, VALU
 
   ssl_set_bio(ssl, net_recv, &fptr->fd, net_send, &fptr->fd);
 
-  return self;
+  return Qtrue;
 }
 
 static VALUE R_ssl_handshake(VALUE self)
