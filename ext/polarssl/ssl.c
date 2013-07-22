@@ -188,20 +188,19 @@ static VALUE R_ssl_read(VALUE self, VALUE length)
 
   VALUE result;
 
-  int buffer_size;
-  buffer_size = NUM2INT(length) - 1;
+  int buffer_size = NUM2INT(length);
+  unsigned char buffer[buffer_size];
+  memset(buffer, sizeof(buffer), 0);
 
-  char buffer[buffer_size];
+  int length_to_read = sizeof(buffer) - 1;
+  int length_read = ssl_read(ssl, buffer, length_to_read);
 
-  int len;
-  len = ssl_read(ssl, (unsigned char *) buffer, buffer_size - 1);
-
-  if (len == 0 || len == POLARSSL_ERR_SSL_PEER_CLOSE_NOTIFY) {
+  if (length_read == 0 || length_read == POLARSSL_ERR_SSL_PEER_CLOSE_NOTIFY) {
     result = Qnil;
-  } else if (len < 0) {
-    rb_raise(e_SSLError, "-0x%x", -len);
+  } else if (length_read < 0) {
+    rb_raise(e_SSLError, "-0x%x", -length_read);
   } else {
-    result = rb_str_new2(buffer);
+    result = rb_str_new(buffer, length_read);
   }
 
   return result;

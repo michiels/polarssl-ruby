@@ -23,16 +23,14 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
 
     ssl.write("GET / HTTP/1.0\r\nHost: polarssl.org\r\n\r\n")
 
-    while ret = ssl.read(1024)
-        puts "==== chunk #{ret.length} ====="
-        puts ret
+    while chunk = ssl.read(1024)
+        puts chunk
     end
 
     ssl.close_notify
 
     socket.close
 
-    # TODO: Specifically close SSL context so memory is freed and no-one can read from memory.
     ssl.close
   end
 
