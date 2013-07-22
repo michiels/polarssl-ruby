@@ -72,7 +72,7 @@ static VALUE R_ssl_initialize(VALUE self)
     rb_raise(e_MallocFailed, "ssl_init() memory allocation failed.");
   }
 
-  // ssl_set_dbg(ssl, my_debug, stdout);
+  ssl_set_dbg(ssl, my_debug, stdout);
 
   return self;
 }
