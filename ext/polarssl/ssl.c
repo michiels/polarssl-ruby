@@ -190,7 +190,6 @@ static VALUE R_ssl_read(VALUE self, VALUE length)
 
   int buffer_size = NUM2INT(length);
   unsigned char buffer[buffer_size];
-  memset(buffer, sizeof(buffer), 0);
 
   int length_to_read = sizeof(buffer) - 1;
   int length_read = ssl_read(ssl, buffer, length_to_read);
@@ -200,7 +199,7 @@ static VALUE R_ssl_read(VALUE self, VALUE length)
   } else if (length_read < 0) {
     rb_raise(e_SSLError, "-0x%x", -length_read);
   } else {
-    result = rb_str_new(buffer, length_read);
+    result = rb_str_new2(buffer);
   }
 
   return result;
