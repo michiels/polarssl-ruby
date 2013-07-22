@@ -56,7 +56,7 @@ static VALUE R_ssl_allocate(VALUE klass)
 {
   ssl_context *ssl;
 
-  return Data_Make_Struct(klass, ssl_context, 0, NULL, ssl);
+  return Data_Make_Struct(klass, ssl_context, 0, ssl_free, ssl);
 }
 
 static VALUE R_ssl_initialize(VALUE self)

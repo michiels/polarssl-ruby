@@ -23,7 +23,7 @@ static VALUE R_ctr_drbg_allocate(VALUE klass)
 {
   ctr_drbg_context *ctr_drbg;
 
-  return Data_Make_Struct(klass, ctr_drbg_context, 0, NULL, ctr_drbg);
+  return Data_Make_Struct(klass, ctr_drbg_context, 0, free, ctr_drbg);
 }
 
 static VALUE R_ctr_drbg_initialize(VALUE self, VALUE entropy)
