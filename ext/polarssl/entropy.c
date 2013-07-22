@@ -19,7 +19,7 @@ static VALUE R_entropy_allocate(VALUE klass)
 {
   entropy_context *entropy;
 
-  return Data_Make_Struct(klass, entropy_context, 0, free, entropy);
+  return Data_Make_Struct(klass, entropy_context, 0, NULL, entropy);
 }
 
 static VALUE R_entropy_initialize(VALUE self)
