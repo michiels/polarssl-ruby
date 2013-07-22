@@ -7,8 +7,4 @@ class CtrDrbgTest < MiniTest::Unit::TestCase
     ctr_drbg = PolarSSL::CtrDrbg.new(entropy)
   end
 
-  def test_self_test
-    PolarSSL::CtrDrbg.self_test
-  end
-
 end
