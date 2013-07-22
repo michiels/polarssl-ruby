@@ -137,8 +137,6 @@ static VALUE R_ssl_handshake(VALUE self)
   ssl_context *ssl;
   Data_Get_Struct(self, ssl_context, ssl);
 
-  VALUE exception;
-
   int ret = ssl_handshake(ssl);
 
   if (ret < 0) {
