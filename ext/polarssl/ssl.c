@@ -67,6 +67,12 @@ static VALUE R_ssl_initialize(VALUE self)
 
   int ret = ssl_init(ssl);
 
+#if POLARSSL_VERSION_MAJOR == 1 && POLARSSL_VERSION_MINOR == 1
+  ssl_session ssn;
+  memset(&ssn, 0, sizeof(ssn));
+  ssl_set_session(ssl, 0, 600, &ssn;);
+#endif
+
   if (ret == POLARSSL_ERR_SSL_MALLOC_FAILED)
   {
     rb_raise(e_MallocFailed, "ssl_init() memory allocation failed.");
