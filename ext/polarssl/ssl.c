@@ -2,6 +2,7 @@
 #include "polarssl/ssl.h"
 #include "polarssl/ctr_drbg.h"
 #include "polarssl/net.h"
+#include "polarssl/version.h"
 #include "ruby/io.h"
 
 VALUE e_MallocFailed;
@@ -67,10 +68,10 @@ static VALUE R_ssl_initialize(VALUE self)
 
   int ret = ssl_init(ssl);
 
-#if POLARSSL_VERSION_MAJOR == 1 && POLARSSL_VERSION_MINOR == 1
+#if POLARSSL_VERSION_MINOR == 1
   ssl_session ssn;
   memset(&ssn, 0, sizeof(ssn));
-  ssl_set_session(ssl, 0, 600, &ssn;);
+  ssl_set_session(ssl, 0, 600, &ssn);
 #endif
 
   if (ret == POLARSSL_ERR_SSL_MALLOC_FAILED)
