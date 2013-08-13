@@ -10,6 +10,7 @@ VALUE e_NetWantRead;
 VALUE e_NetWantWrite;
 VALUE e_SSLError;
 
+static void R_ssl_mark();
 static VALUE R_ssl_allocate();
 static VALUE R_ssl_initialize();
 static VALUE R_ssl_set_endpoint();
@@ -41,7 +42,6 @@ extern void Init_ssl()
   rb_define_const(cSSL, "SSL_VERIFY_REQUIRED", INT2NUM(SSL_VERIFY_REQUIRED));
 
   rb_define_alloc_func(cSSL, R_ssl_allocate);
-  rb_define_method(cSSL, "initialize", R_ssl_initialize, 0);
   rb_define_method(cSSL, "set_endpoint", R_ssl_set_endpoint, 1);
   rb_define_method(cSSL, "set_authmode", R_ssl_set_authmode, 1);
   rb_define_method(cSSL, "set_rng", R_ssl_set_rng, 1);
@@ -56,32 +56,25 @@ extern void Init_ssl()
 static VALUE R_ssl_allocate(VALUE klass)
 {
   ssl_context *ssl;
-
-  return Data_Make_Struct(klass, ssl_context, 0, ssl_free, ssl);
-}
-
-static VALUE R_ssl_initialize(VALUE self)
-{
-  ssl_context *ssl;
-
-  Data_Get_Struct(self, ssl_context, ssl);
+  ssl = ALLOC(ssl_context);
 
   int ret = ssl_init(ssl);
-
-#if POLARSSL_VERSION_MINOR == 1
-  ssl_session ssn;
-  memset(&ssn, 0, sizeof(ssn));
-  ssl_set_session(ssl, 0, 600, &ssn);
-#endif
 
   if (ret == POLARSSL_ERR_SSL_MALLOC_FAILED)
   {
     rb_raise(e_MallocFailed, "ssl_init() memory allocation failed.");
   }
 
+  #if POLARSSL_VERSION_MINOR == 1
+    ssl_session *ssn;
+    ssn = ALLOC(ssl_session);
+    ssl_set_session(ssl, 0, 600, ssn);
+    ssl_set_ciphersuites(ssl, ssl_default_ciphersuites);
+  #endif
+
   ssl_set_dbg(ssl, my_debug, stdout);
 
-  return self;
+  return Data_Wrap_Struct(klass, 0, ssl_free, ssl);
 }
 
 static VALUE R_ssl_set_endpoint(VALUE self, VALUE endpoint_mode)
@@ -133,6 +126,8 @@ static VALUE R_ssl_set_bio(VALUE self, VALUE recv_func, VALUE input_socket, VALU
 
   rb_io_t *fptr;
   GetOpenFile(input_socket, fptr);
+
+  rb_ivar_set(self, rb_intern("socket"), input_socket);
 
   ssl_set_bio(ssl, net_recv, &fptr->fd, net_send, &fptr->fd);
 

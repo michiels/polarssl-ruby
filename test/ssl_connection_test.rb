@@ -4,6 +4,7 @@ require 'socket'
 class SSLConnectionTest < MiniTest::Unit::TestCase
 
   def test_simple_connection
+    GC.stress = true
     socket = TCPSocket.new('polarssl.org', 443)
 
     entropy = PolarSSL::Entropy.new
@@ -16,7 +17,7 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
     ssl.set_authmode(PolarSSL::SSL::SSL_VERIFY_NONE)
     ssl.set_rng(ctr_drbg)
 
-    # TODO: Implement passing methods/procs to people can define their own send/recv methods
+    # # TODO: Implement passing methods/procs to people can define their own send/recv methods
     ssl.set_bio(Proc.new { |fp| }, socket, Proc.new { |fp| }, socket)
 
     ssl.handshake
@@ -24,8 +25,10 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
     ssl.write("GET / HTTP/1.0\r\nHost: polarssl.org\r\n\r\n")
 
     while chunk = ssl.read(1024)
-        puts chunk
+      puts chunk
     end
+
+    puts "--- meh ---   "
 
     ssl.close_notify
 
