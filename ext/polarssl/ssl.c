@@ -58,6 +58,10 @@ static VALUE R_ssl_allocate(VALUE klass)
   ssl_context *ssl;
   int ret;
 
+  #if POLARSSL_VERSION_MAJOR == 1 && POLARSSL_VERSION_MINOR == 1
+    ssl_session *ssn;
+  #endif
+
   ssl = ALLOC(ssl_context);
 
   ret = ssl_init(ssl);
@@ -68,7 +72,6 @@ static VALUE R_ssl_allocate(VALUE klass)
   }
 
   #if POLARSSL_VERSION_MAJOR == 1 && POLARSSL_VERSION_MINOR == 1
-    ssl_session ssn;
     ssn = ALLOC(ssl_session);
     ssl_set_session(ssl, 0, 600, ssn);
     ssl_set_ciphersuites(ssl, ssl_default_ciphersuites);
