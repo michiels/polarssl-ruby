@@ -45,5 +45,5 @@ static VALUE R_entropy_gather(VALUE self)
     ret = Qfalse;
   }
 
-  return self;
+  return ret;
 }
