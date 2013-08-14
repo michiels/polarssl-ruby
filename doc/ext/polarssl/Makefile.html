@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>Makefile - Meh</title>
+
+<link type="text/css" media="screen" href="../../rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../../";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="../../js/darkfish.js"></script>
+
+
+<body class="file">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="../../index.html">Home</a>
+    <a href="../../table_of_contents.html#classes">Classes</a>
+    <a href="../../table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="../../ext/polarssl/Makefile.html">Makefile</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="../../PolarSSL.html">PolarSSL</a>
+  
+    <li><a href="../../PolarSSL/MallocFailed.html">PolarSSL::MallocFailed</a>
+  
+    <li><a href="../../PolarSSL/NetWantRead.html">PolarSSL::NetWantRead</a>
+  
+    <li><a href="../../PolarSSL/SSL.html">PolarSSL::SSL</a>
+  
+    <li><a href="../../PolarSSL/SSL/Error.html">PolarSSL::SSL::Error</a>
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation" class="description">
+  
+<p>SHELL = /bin/sh</p>
+
+<p># V=0 quiet, V=1 verbose.  other values don&#39;t work. V = 0 Q1 = $(V:1=)
+Q = $(Q1:0=@) ECHO1 = $(V:1=@:) ECHO = $(ECHO1:0=@echo)</p>
+
+<p>#### Start of system configuration section. ####</p>
+
+<p>srcdir = . topdir = $(includedir)/$(RUBY_VERSION_NAME) hdrdir =
+$(includedir)/$(RUBY_VERSION_NAME) arch_hdrdir = $(rubyhdrdir)/$(arch)
+PATH_SEPARATOR = : VPATH = $(srcdir):$(arch_hdrdir)/ruby:$(hdrdir)/ruby
+prefix = $(DESTDIR)/Users/michiel/.rbenv/versions/2.0.0-p195
+rubysitearchprefix = $(rubylibprefix)/$(sitearch) rubyarchprefix =
+$(rubylibprefix)/$(arch) rubylibprefix = $(libdir)/$(RUBY_BASE_NAME)
+exec_prefix = $(prefix) vendorarchhdrdir = $(vendorhdrdir)/$(sitearch)
+sitearchhdrdir = $(sitehdrdir)/$(sitearch) rubyarchhdrdir =
+$(rubyhdrdir)/$(arch) vendorhdrdir = $(rubyhdrdir)/vendor_ruby sitehdrdir =
+$(rubyhdrdir)/site_ruby rubyhdrdir = $(includedir)/$(RUBY_VERSION_NAME)
+vendorarchdir = $(vendorlibdir)/$(sitearch) vendorlibdir =
+$(vendordir)/$(ruby_version) vendordir = $(rubylibprefix)/vendor_ruby
+sitearchdir = $(sitelibdir)/$(sitearch) sitelibdir =
+$(sitedir)/$(ruby_version) sitedir = $(rubylibprefix)/site_ruby rubyarchdir
+= $(rubylibdir)/$(arch) rubylibdir = $(rubylibprefix)/$(ruby_version)
+sitearchincludedir = $(includedir)/$(sitearch) archincludedir =
+$(includedir)/$(arch) sitearchlibdir = $(libdir)/$(sitearch) archlibdir =
+$(libdir)/$(arch) ridir = $(datarootdir)/$(RI_BASE_NAME) mandir =
+$(datarootdir)/man localedir = $(datarootdir)/locale libdir =
+$(exec_prefix)/lib psdir = $(docdir) pdfdir = $(docdir) dvidir = $(docdir)
+htmldir = $(docdir) infodir = $(datarootdir)/info docdir =
+$(datarootdir)/doc/$(PACKAGE) oldincludedir = $(DESTDIR)/usr/include
+includedir = $(prefix)/include localstatedir = $(prefix)/var sharedstatedir
+= $(prefix)/com sysconfdir = $(prefix)/etc datadir = $(datarootdir)
+datarootdir = $(prefix)/share libexecdir = $(exec_prefix)/libexec sbindir =
+$(exec_prefix)/sbin bindir = $(exec_prefix)/bin archdir = $(rubyarchdir)</p>
+
+<p>CC = gcc-4.2 CXX = g++ LIBRUBY = $(LIBRUBY_A) LIBRUBY_A =
+lib$(RUBY_SO_NAME)-static.a LIBRUBYARG_SHARED =  LIBRUBYARG_STATIC =
+-l$(RUBY_SO_NAME)-static empty = OUTFLAG = -o $(empty) COUTFLAG = -o
+$(empty)</p>
+
+<p>RUBY_EXTCONF_H =  cflags   =  $(optflags) $(debugflags) $(warnflags)
+optflags = -O3 -fno-fast-math debugflags = -ggdb3 warnflags = -Wall -Wextra
+-Wno-unused-parameter -Wno-parentheses -Wno-long-long
+-Wno-missing-field-initializers -Wunused-variable -Wpointer-arith
+-Wwrite-strings -Wdeclaration-after-statement -Wshorten-64-to-32
+-Wimplicit-function-declaration CCDLFLAGS = -fno-common CFLAGS   =
+$(CCDLFLAGS) -g -Wall -Wdeclaration-after-statement  -O3
+-Wno-error=shorten-64-to-32  -pipe $(ARCH_FLAG) INCFLAGS = -I.
+-I$(arch_hdrdir) -I$(hdrdir)/ruby/backward -I$(hdrdir) -I$(srcdir) DEFS    
+=  CPPFLAGS = 
+-I&#39;/Users/michiel/.rbenv/versions/2.0.0-p195/include&#39; 
+-D_XOPEN_SOURCE -D_DARWIN_C_SOURCE -D_DARWIN_UNLIMITED_SELECT -D_REENTRANT
+$(DEFS) $(cppflags) CXXFLAGS = $(CCDLFLAGS) $(cxxflags) $(ARCH_FLAG)
+ldflags  = -L. -L&#39;/Users/michiel/.rbenv/versions/2.0.0-p195/lib&#39; 
+-L/usr/local/lib dldflags = -Wl,-undefined,dynamic_lookup
+-Wl,-multiply_defined,suppress  ARCH_FLAG =  DLDFLAGS = $(ldflags)
+$(dldflags) $(ARCH_FLAG) LDSHARED = $(CC) -dynamic -bundle LDSHAREDXX =
+$(CXX) -dynamic -bundle AR = ar EXEEXT =</p>
+
+<p>RUBY_INSTALL_NAME = ruby RUBY_SO_NAME = ruby RUBYW_INSTALL_NAME = 
+RUBY_VERSION_NAME = $(RUBY_BASE_NAME)-$(ruby_version) RUBYW_BASE_NAME =
+rubyw RUBY_BASE_NAME = ruby</p>
+
+<p>arch = x86_64-darwin12.4.0 sitearch = $(arch) ruby_version = 2.0.0 ruby =
+$(bindir)/ruby RUBY = $(ruby) ruby_headers = $(hdrdir)/ruby.h
+$(hdrdir)/ruby/defines.h $(arch_hdrdir)/ruby/config.h</p>
+
+<p>RM = rm -f RM_RF = $(RUBY) -run -e rm – -rf RMDIRS = rmdir -p MAKEDIRS =
+mkdir -p INSTALL = /usr/bin/install -c INSTALL_PROG = $(INSTALL) -m 0755
+INSTALL_DATA = $(INSTALL) -m 644 COPY = cp TOUCH = exit &gt;</p>
+
+<p>#### End of system configuration section. ####</p>
+
+<p>preload =</p>
+
+<p>libpath = . $(libdir) LIBPATH =  -L. -L$(libdir) DEFFILE =</p>
+
+<p>CLEANFILES = mkmf.log DISTCLEANFILES =  DISTCLEANDIRS =</p>
+
+<p>extout =  extout_prefix =  target_prefix = /polarssl LOCAL_LIBS =  LIBS = 
+-lpolarssl  -lpthread -ldl -lobjc  ORIG_SRCS = ctr_drbg.c entropy.c
+polarssl.c ssl.c SRCS = $(ORIG_SRCS)  OBJS = ctr_drbg.o entropy.o
+polarssl.o ssl.o HDRS = $(srcdir)/ctr_drbg.h $(srcdir)/entropy.h
+$(srcdir)/polarssl.h $(srcdir)/ssl.h TARGET = polarssl TARGET_NAME =
+polarssl TARGET_ENTRY = Init_$(TARGET_NAME) DLLIB = $(TARGET).bundle
+EXTSTATIC =  STATIC_LIB =</p>
+
+<p>BINDIR        = $(bindir) RUBYCOMMONDIR = $(sitedir)$(target_prefix)
+RUBYLIBDIR    = $(sitelibdir)$(target_prefix) RUBYARCHDIR   =
+$(sitearchdir)$(target_prefix) HDRDIR        =
+$(rubyhdrdir)/ruby$(target_prefix) ARCHHDRDIR    =
+$(rubyhdrdir)/$(arch)/ruby$(target_prefix)</p>
+
+<p>TARGET_SO     = $(DLLIB) CLEANLIBS     = $(TARGET).bundle  CLEANOBJS     =
+*.o  *.bak</p>
+
+<p>all:    $(DLLIB) static: $(STATIC_LIB) .PHONY: all install static
+install-so install-rb .PHONY: clean clean-so clean-static clean-rb</p>
+<dl class="rdoc-list note-list"><dt>clean-static
+<dd></dd><dt>clean-rb-default
+<dd></dd><dt>clean-rb
+<dd></dd><dt>clean-so
+<dd>
+<p>clean: clean-so clean-static clean-rb-default clean-rb</p>
+
+<pre>-$(Q)$(RM) $(CLEANLIBS) $(CLEANOBJS) $(CLEANFILES) .*.time</pre>
+<dl class="rdoc-list note-list"><dt>distclean-rb-default
+<dd></dd><dt>distclean-rb
+<dd></dd><dt>distclean-so
+<dd></dd><dt>distclean-static
+<dd>
+<p>distclean: clean distclean-so distclean-static distclean-rb-default
+distclean-rb</p>
+
+<pre>-$(Q)$(RM) Makefile $(RUBY_EXTCONF_H) conftest.* mkmf.log
+-$(Q)$(RM) core ruby$(EXEEXT) *~ $(DISTCLEANFILES)
+-$(Q)$(RMDIRS) $(DISTCLEANDIRS) 2&gt; /dev/null || true</pre>
+
+<p>realclean: distclean install: install-so install-rb</p>
+
+<p>install-so: $(DLLIB) ./.RUBYARCHDIR.time</p>
+
+<pre>$(INSTALL_PROG) $(DLLIB) $(RUBYARCHDIR)</pre>
+<dl class="rdoc-list note-list"><dt>clean-static
+<dd>
+<p>-$(Q)$(RM) $(STATIC_LIB)</p>
+</dd></dl>
+
+<p>install-rb: pre-install-rb install-rb-default install-rb-default:
+pre-install-rb-default pre-install-rb: <a href="Makefile.html">Makefile</a>
+pre-install-rb-default: <a href="Makefile.html">Makefile</a>
+pre-install-rb-default:</p>
+
+<pre>$(ECHO) installing default polarssl libraries</pre>
+
+<p>./.RUBYARCHDIR.time:</p>
+
+<pre>$(Q) $(MAKEDIRS) $(RUBYARCHDIR)
+$(Q) $(TOUCH) $@</pre>
+
+<p>site-install: site-install-so site-install-rb site-install-so: install-so
+site-install-rb: install-rb</p>
+
+<p>.SUFFIXES: .c .m .cc .mm .cxx .cpp .C .o</p>
+
+<p>.cc.o:</p>
+
+<pre>$(ECHO) compiling $(&lt;)
+$(Q) $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(COUTFLAG)$@ -c $&lt;</pre>
+
+<p>.mm.o:</p>
+
+<pre>$(ECHO) compiling $(&lt;)
+$(Q) $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(COUTFLAG)$@ -c $&lt;</pre>
+
+<p>.cxx.o:</p>
+
+<pre>$(ECHO) compiling $(&lt;)
+$(Q) $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(COUTFLAG)$@ -c $&lt;</pre>
+
+<p>.cpp.o:</p>
+
+<pre>$(ECHO) compiling $(&lt;)
+$(Q) $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(COUTFLAG)$@ -c $&lt;</pre>
+
+<p>.C.o:</p>
+
+<pre>$(ECHO) compiling $(&lt;)
+$(Q) $(CXX) $(INCFLAGS) $(CPPFLAGS) $(CXXFLAGS) $(COUTFLAG)$@ -c $&lt;</pre>
+
+<p>.c.o:</p>
+
+<pre>$(ECHO) compiling $(&lt;)
+$(Q) $(CC) $(INCFLAGS) $(CPPFLAGS) $(CFLAGS) $(COUTFLAG)$@ -c $&lt;</pre>
+
+<p>.m.o:</p>
+
+<pre>$(ECHO) compiling $(&lt;)
+$(Q) $(CC) $(INCFLAGS) $(CPPFLAGS) $(CFLAGS) $(COUTFLAG)$@ -c $&lt;</pre>
+
+<p>$(DLLIB): $(OBJS) <a href="Makefile.html">Makefile</a></p>
+
+<pre>$(ECHO) linking shared-object polarssl/$(DLLIB)
+-$(Q)$(RM) $(@)
+$(Q) $(LDSHARED) -o $@ $(OBJS) $(LIBPATH) $(DLDFLAGS) $(LOCAL_LIBS) $(LIBS)
+$(Q) test -z &#39;$(RUBY_CODESIGN)&#39; || codesign -s &#39;$(RUBY_CODESIGN)&#39; -f $@</pre>
+
+<p>$(OBJS): $(HDRS) $(ruby_headers)</p>
+</dd></dl>
+</dd></dl>
+
+</div>
+
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 3.12.2.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+

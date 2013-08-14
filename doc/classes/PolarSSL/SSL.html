@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>PolarSSL::SSL</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
+<script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            PolarSSL::SSL 
+            
+                <span class="parent">&lt; 
+                    
+                    rb_cObject 
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../files/ext/polarssl/polarssl_c.html">ext/polarssl/polarssl.c</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+
+
+  
+
+
+  
+  
+
+
+  
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="SSL/Error.html">PolarSSL::SSL::Error</a>
+        </li>
+      
+    </ul>
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>C</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-close">close</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-close_notify">close_notify</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>H</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-handshake">handshake</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>R</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-read">read</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>S</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-set_authmode">set_authmode</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-set_endpoint">set_endpoint</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-set_rng">set_rng</a>,
+              </li>
+            
+              
+              <li>
+                <a href="#method-i-set_socket">set_socket</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>W</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-write">write</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+      <!-- Section constants -->
+      <div class="sectiontitle">Constants</div>
+      <table border='0' cellpadding='5'>
+        
+          <tr valign='top'>
+            <td class="attr-name">SSL_IS_CLIENT</td>
+            <td>=</td>
+            <td class="attr-value">0</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Constant to set endpoint as client.</p></td>
+            </tr>
+          
+        
+          <tr valign='top'>
+            <td class="attr-name">SSL_VERIFY_NONE</td>
+            <td>=</td>
+            <td class="attr-value">INT2NUM( SSL_VERIFY_NONE )</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"></td>
+            </tr>
+          
+        
+          <tr valign='top'>
+            <td class="attr-name">SSL_VERIFY_REQUIRED</td>
+            <td>=</td>
+            <td class="attr-value">INT2NUM( SSL_VERIFY_REQUIRED )</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"></td>
+            </tr>
+          
+        
+      </table>
+    
+
+
+    
+
+
+    <!-- Methods -->
+        
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-close">
+            
+              <b>close</b>()
+            
+            <a href="../../classes/PolarSSL/SSL.html#method-i-close" name="method-i-close" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-close_source')" id="l_method-i-close_source">show</a>
+                
+              </p>
+              <div id="method-i-close_source" class="dyn-source">
+                <pre>static VALUE R_close( VALUE self )
+{
+    ssl_context *ssl;
+    Data_Get_Struct( self, ssl_context, ssl );
+
+    memset( ssl, 0, sizeof( ssl_context ) );
+
+    return Qtrue;
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-close_notify">
+            
+              <b>close_notify</b>()
+            
+            <a href="../../classes/PolarSSL/SSL.html#method-i-close_notify" name="method-i-close_notify" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-close_notify_source')" id="l_method-i-close_notify_source">show</a>
+                
+              </p>
+              <div id="method-i-close_notify_source" class="dyn-source">
+                <pre>static VALUE R_ssl_close_notify( VALUE self )
+{
+    ssl_context *ssl;
+    int ret;
+    Data_Get_Struct( self, ssl_context, ssl );
+
+    ret = ssl_close_notify( ssl );
+
+    if (ret &lt; 0)
+        rb_raise( e_SSLError, &quot;-0x%x&quot;, -ret );
+
+    return Qtrue;
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-handshake">
+            
+              <b>handshake</b>()
+            
+            <a href="../../classes/PolarSSL/SSL.html#method-i-handshake" name="method-i-handshake" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-handshake_source')" id="l_method-i-handshake_source">show</a>
+                
+              </p>
+              <div id="method-i-handshake_source" class="dyn-source">
+                <pre>static VALUE R_ssl_handshake(VALUE self)
+{
+    ssl_context *ssl;
+    int ret;
+
+    Data_Get_Struct( self, ssl_context, ssl );
+
+    ret = ssl_handshake( ssl );
+
+    if ( ret &lt; 0 )
+    {
+        if ( ret == POLARSSL_ERR_NET_WANT_READ )
+        {
+          rb_raise( e_NetWantRead, &quot;ssl_handshake() returned POLARSSL_ERR_NET_WANT_READ&quot; );
+        }
+        else if ( ret == POLARSSL_ERR_NET_WANT_WRITE )
+        {
+          rb_raise( e_NetWantWrite, &quot;ssl_handshake() returned POLARSSL_ERR_NET_WANT_WRITE&quot; );
+        }
+        else
+        {
+          rb_raise( e_SSLError, &quot;-0x%x&quot;, -ret );
+        }
+    }
+    else
+    {
+        return Qtrue;
+    }
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-read">
+            
+              <b>read</b>(p1)
+            
+            <a href="../../classes/PolarSSL/SSL.html#method-i-read" name="method-i-read" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-read_source')" id="l_method-i-read_source">show</a>
+                
+              </p>
+              <div id="method-i-read_source" class="dyn-source">
+                <pre>static VALUE R_ssl_read( VALUE self, VALUE length )
+{
+    ssl_context *ssl;
+    VALUE result;
+    int buffer_size = NUM2INT( length );
+    unsigned char buffer[buffer_size];
+    int length_to_read;
+    int length_read;
+
+    Check_Type( length, T_FIXNUM );
+
+    Data_Get_Struct( self, ssl_context, ssl );
+
+    length_to_read = sizeof( buffer ) - 1;
+    length_read = ssl_read( ssl, buffer, length_to_read );
+
+    if ( length_read == 0 || length_read == POLARSSL_ERR_SSL_PEER_CLOSE_NOTIFY )
+    {
+        result = Qnil;
+    }
+    else if (length_read &lt; 0)
+    {
+        rb_raise( e_SSLError, &quot;-0x%x&quot;, -length_read );
+    }
+    else
+    {
+        result = rb_str_new2( (char *)buffer );
+    }
+
+    return result;
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-set_authmode">
+            
+              <b>set_authmode</b>(p1)
+            
+            <a href="../../classes/PolarSSL/SSL.html#method-i-set_authmode" name="method-i-set_authmode" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-set_authmode_source')" id="l_method-i-set_authmode_source">show</a>
+                
+              </p>
+              <div id="method-i-set_authmode_source" class="dyn-source">
+                <pre>static VALUE R_ssl_set_authmode( VALUE self, VALUE authmode )
+{
+    ssl_context *ssl;
+
+    Check_Type( authmode, T_FIXNUM );
+
+    Data_Get_Struct( self, ssl_context, ssl );
+
+    ssl_set_authmode( ssl, NUM2INT( authmode ) );
+
+    return Qtrue;
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-set_endpoint">
+            
+              <b>set_endpoint( endpoint_mode )
+</b>
+            
+            <a href="../../classes/PolarSSL/SSL.html#method-i-set_endpoint" name="method-i-set_endpoint" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Sets the endpoint mode for the current <a href="SSL.html">SSL</a> context.
+This allows you to set your <a href="SSL.html">SSL</a> context to be a
+client or server. Possible values are:</p>
+<ul><li>
+<p>PolarSSL::SSL::SSL_IS_CLIENT</p>
+</li></ul>
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-set_endpoint_source')" id="l_method-i-set_endpoint_source">show</a>
+                
+              </p>
+              <div id="method-i-set_endpoint_source" class="dyn-source">
+                <pre>static VALUE R_ssl_set_endpoint( VALUE self, VALUE endpoint_mode )
+{
+    ssl_context *ssl;
+
+    Check_Type( endpoint_mode, T_FIXNUM );
+
+    Data_Get_Struct( self, ssl_context, ssl );
+
+    ssl_set_endpoint( ssl, NUM2INT( endpoint_mode ) );
+
+    return Qtrue;
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-set_rng">
+            
+              <b>set_rng</b>(p1)
+            
+            <a href="../../classes/PolarSSL/SSL.html#method-i-set_rng" name="method-i-set_rng" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-set_rng_source')" id="l_method-i-set_rng_source">show</a>
+                
+              </p>
+              <div id="method-i-set_rng_source" class="dyn-source">
+                <pre>static VALUE R_ssl_set_rng( VALUE self, VALUE rng )
+{
+    ssl_context *ssl;
+    ctr_drbg_context *ctr_drbg;
+
+    Check_Type( rng, T_DATA );
+
+    Data_Get_Struct( self, ssl_context, ssl );
+    Data_Get_Struct( rng, ctr_drbg_context, ctr_drbg );
+
+    ssl_set_rng( ssl, ctr_drbg_random, ctr_drbg );
+
+    return Qtrue;
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-set_socket">
+            
+              <b>set_socket</b>(p1)
+            
+            <a href="../../classes/PolarSSL/SSL.html#method-i-set_socket" name="method-i-set_socket" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-set_socket_source')" id="l_method-i-set_socket_source">show</a>
+                
+              </p>
+              <div id="method-i-set_socket_source" class="dyn-source">
+                <pre>static VALUE R_ssl_set_socket( VALUE self, VALUE socket )
+{
+    ssl_context *ssl;
+    rb_io_t *fptr;
+
+    Check_Type( socket, T_FILE );
+
+    Data_Get_Struct( self, ssl_context, ssl );
+
+    GetOpenFile( socket, fptr );
+
+    ssl_set_bio( ssl, net_recv, &amp;fptr-&gt;fd, net_send, &amp;fptr-&gt;fd );
+
+    return Qtrue;
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-write">
+            
+              <b>write</b>(p1)
+            
+            <a href="../../classes/PolarSSL/SSL.html#method-i-write" name="method-i-write" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-write_source')" id="l_method-i-write_source">show</a>
+                
+              </p>
+              <div id="method-i-write_source" class="dyn-source">
+                <pre>static VALUE R_ssl_write( VALUE self, VALUE string )
+{
+    ssl_context *ssl;
+    char *buffer;
+    int ret;
+
+    Check_Type( string, T_STRING );
+
+    Data_Get_Struct( self, ssl_context, ssl );
+
+    buffer = RSTRING_PTR( string );
+
+    ret = ssl_write( ssl, (const unsigned char *) buffer, RSTRING_LEN( string ) );
+
+    if ( ret &lt; 0 )
+        rb_raise( e_SSLError, &quot;-0x%x&quot;, -ret );
+
+    return Qtrue;
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    
