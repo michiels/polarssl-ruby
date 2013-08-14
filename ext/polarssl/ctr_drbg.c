@@ -37,9 +37,7 @@ static VALUE R_ctr_drbg_initialize( VALUE self, VALUE entropy )
   ret = ctr_drbg_init( ctr_drbg, entropy_func, entropy_p, NULL, 0 );
 
   if( ret == POLARSSL_ERR_CTR_DRBG_ENTROPY_SOURCE_FAILED )
-  {
     rb_raise( e_EntropySourceFailed, "Could not initialize entropy source" );
-  }
 
   return self;
 }
