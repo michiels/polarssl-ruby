@@ -29,11 +29,12 @@ static VALUE R_ctr_drbg_initialize(VALUE self, VALUE entropy)
 {
   entropy_context *entropy_p;
   ctr_drbg_context *ctr_drbg;
+  int ret;
 
   Data_Get_Struct(self, ctr_drbg_context, ctr_drbg);
   Data_Get_Struct(entropy, entropy_context, entropy_p);
 
-  int ret = ctr_drbg_init(ctr_drbg, entropy_func, entropy_p, NULL, 0);
+  ret = ctr_drbg_init(ctr_drbg, entropy_func, entropy_p, NULL, 0);
 
   if (ret == POLARSSL_ERR_CTR_DRBG_ENTROPY_SOURCE_FAILED)
   {

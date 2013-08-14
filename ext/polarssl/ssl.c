@@ -28,10 +28,12 @@ void my_debug(void *ctx, int level, const char *str)
 
 extern void Init_ssl()
 {
+  VALUE cSSL;
+
   e_MallocFailed = rb_define_class_under(mPolarSSL, "MallocFailed", rb_eStandardError);
   e_NetWantRead = rb_define_class_under(mPolarSSL, "NetWantRead", rb_eStandardError);
 
-  VALUE cSSL = rb_define_class_under(mPolarSSL, "SSL", rb_cObject);
+  cSSL = rb_define_class_under(mPolarSSL, "SSL", rb_cObject);
 
   e_SSLError = rb_define_class_under(cSSL, "Error", rb_eRuntimeError);
 
@@ -54,9 +56,11 @@ extern void Init_ssl()
 static VALUE R_ssl_allocate(VALUE klass)
 {
   ssl_context *ssl;
+  int ret;
+
   ssl = ALLOC(ssl_context);
 
-  int ret = ssl_init(ssl);
+  ret = ssl_init(ssl);
 
   if (ret == POLARSSL_ERR_SSL_MALLOC_FAILED)
   {
@@ -76,9 +80,10 @@ static VALUE R_ssl_allocate(VALUE klass)
 
 static VALUE R_ssl_set_endpoint(VALUE self, VALUE endpoint_mode)
 {
+  ssl_context *ssl;
+
   Check_Type(endpoint_mode, T_FIXNUM);
 
-  ssl_context *ssl;
   Data_Get_Struct(self, ssl_context, ssl);
 
   ssl_set_endpoint(ssl, NUM2INT(endpoint_mode));
@@ -88,9 +93,10 @@ static VALUE R_ssl_set_endpoint(VALUE self, VALUE endpoint_mode)
 
 static VALUE R_ssl_set_authmode(VALUE self, VALUE authmode)
 {
+  ssl_context *ssl;
+
   Check_Type(authmode, T_FIXNUM);
 
-  ssl_context *ssl;
   Data_Get_Struct(self, ssl_context, ssl);
 
   ssl_set_authmode(ssl, NUM2INT(authmode));
@@ -100,12 +106,12 @@ static VALUE R_ssl_set_authmode(VALUE self, VALUE authmode)
 
 static VALUE R_ssl_set_rng(VALUE self, VALUE rng)
 {
+  ssl_context *ssl;
+  ctr_drbg_context *ctr_drbg;
+
   Check_Type(rng, T_DATA);
 
-  ssl_context *ssl;
   Data_Get_Struct(self, ssl_context, ssl);
-
-  ctr_drbg_context *ctr_drbg;
   Data_Get_Struct(rng, ctr_drbg_context, ctr_drbg);
 
   ssl_set_rng(ssl, ctr_drbg_random, ctr_drbg);
@@ -115,13 +121,14 @@ static VALUE R_ssl_set_rng(VALUE self, VALUE rng)
 
 static VALUE R_ssl_set_bio(VALUE self, VALUE recv_func, VALUE input_socket, VALUE send_func, VALUE output_socket)
 {
+  ssl_context *ssl;
+  rb_io_t *fptr;
+
   Check_Type(input_socket, T_FILE);
   Check_Type(output_socket, T_FILE);
 
-  ssl_context *ssl;
   Data_Get_Struct(self, ssl_context, ssl);
 
-  rb_io_t *fptr;
   GetOpenFile(input_socket, fptr);
 
   ssl_set_bio(ssl, net_recv, &fptr->fd, net_send, &fptr->fd);
@@ -132,9 +139,11 @@ static VALUE R_ssl_set_bio(VALUE self, VALUE recv_func, VALUE input_socket, VALU
 static VALUE R_ssl_handshake(VALUE self)
 {
   ssl_context *ssl;
+  int ret;
+
   Data_Get_Struct(self, ssl_context, ssl);
 
-  int ret = ssl_handshake(ssl);
+  ret = ssl_handshake(ssl);
 
   if (ret < 0) {
     if (ret == POLARSSL_ERR_NET_WANT_READ)
@@ -156,15 +165,17 @@ static VALUE R_ssl_handshake(VALUE self)
 
 static VALUE R_ssl_write(VALUE self, VALUE string)
 {
+  ssl_context *ssl;
+  char *buffer;
+  int ret;
+
   Check_Type(string, T_STRING);
 
-  ssl_context *ssl;
   Data_Get_Struct(self, ssl_context, ssl);
 
-  char *buffer;
   buffer = RSTRING_PTR(string);
 
-  int ret = ssl_write(ssl, (const unsigned char *) buffer, RSTRING_LEN(string));
+  ret = ssl_write(ssl, (const unsigned char *) buffer, RSTRING_LEN(string));
 
   if (ret < 0)
   {
@@ -176,18 +187,19 @@ static VALUE R_ssl_write(VALUE self, VALUE string)
 
 static VALUE R_ssl_read(VALUE self, VALUE length)
 {
-  Check_Type(length, T_FIXNUM);
-
   ssl_context *ssl;
-  Data_Get_Struct(self, ssl_context, ssl);
-
   VALUE result;
-
   int buffer_size = NUM2INT(length);
   unsigned char buffer[buffer_size];
+  int length_to_read;
+  int length_read;
 
-  int length_to_read = sizeof(buffer) - 1;
-  int length_read = ssl_read(ssl, buffer, length_to_read);
+  Check_Type(length, T_FIXNUM);
+
+  Data_Get_Struct(self, ssl_context, ssl);
+
+  length_to_read = sizeof(buffer) - 1;
+  length_read = ssl_read(ssl, buffer, length_to_read);
 
   if (length_read == 0 || length_read == POLARSSL_ERR_SSL_PEER_CLOSE_NOTIFY) {
     result = Qnil;
@@ -203,9 +215,10 @@ static VALUE R_ssl_read(VALUE self, VALUE length)
 static VALUE R_ssl_close_notify(VALUE self)
 {
   ssl_context *ssl;
+  int ret;
   Data_Get_Struct(self, ssl_context, ssl);
 
-  int ret = ssl_close_notify(ssl);
+  ret = ssl_close_notify(ssl);
 
   if (ret < 0)
   {

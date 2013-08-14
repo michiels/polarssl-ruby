@@ -35,9 +35,9 @@ static VALUE R_entropy_initialize(VALUE self)
 static VALUE R_entropy_gather(VALUE self)
 {
   entropy_context *entropy;
-  Data_Get_Struct(self, entropy_context, entropy);
-
   VALUE ret;
+
+  Data_Get_Struct(self, entropy_context, entropy);
 
   if(entropy_gather(entropy) == 0) {
     ret = Qtrue;
