@@ -66,6 +66,7 @@ static VALUE R_ssl_allocate(VALUE klass)
   }
 
   #if POLARSSL_VERSION_MINOR == 1
+    printf("POLAR 1.1.4");
     ssl_session *ssn;
     ssn = ALLOC(ssl_session);
     ssl_set_session(ssl, 0, 600, ssn);
@@ -74,7 +75,11 @@ static VALUE R_ssl_allocate(VALUE klass)
 
   ssl_set_dbg(ssl, my_debug, stdout);
 
-  return Data_Wrap_Struct(klass, 0, ssl_free, ssl);
+  return Data_Wrap_Struct(klass, R_ssl_mark, ssl_free, ssl);
+}
+
+static void R_ssl_mark() {
+
 }
 
 static VALUE R_ssl_set_endpoint(VALUE self, VALUE endpoint_mode)

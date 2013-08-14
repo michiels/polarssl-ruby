@@ -7,6 +7,8 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
     GC.stress = true
     socket = TCPSocket.new('polarssl.org', 443)
 
+    GC.start
+
     entropy = PolarSSL::Entropy.new
 
     ctr_drbg = PolarSSL::CtrDrbg.new(entropy)
