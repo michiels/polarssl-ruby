@@ -57,11 +57,16 @@ extern void Init_ssl()
     e_MallocFailed = rb_define_class_under( mPolarSSL, "MallocFailed", rb_eStandardError );
     e_NetWantRead = rb_define_class_under( mPolarSSL, "NetWantRead", rb_eStandardError );
 
+    /*
+     * Class +SSL+ provides the core functionality to set up secure connections.
+     */
     cSSL = rb_define_class_under( mPolarSSL, "SSL", rb_cObject );
 
     e_SSLError = rb_define_class_under( cSSL, "Error", rb_eRuntimeError );
 
+    /* 0: Constant to set endpoint as client. */
     rb_define_const( cSSL, "SSL_IS_CLIENT", INT2NUM( SSL_IS_CLIENT ) );
+
     rb_define_const( cSSL, "SSL_VERIFY_NONE", INT2NUM( SSL_VERIFY_NONE ) );
     rb_define_const( cSSL, "SSL_VERIFY_REQUIRED", INT2NUM( SSL_VERIFY_REQUIRED ) );
 
@@ -104,6 +109,15 @@ static VALUE R_ssl_allocate( VALUE klass )
     return Data_Wrap_Struct( klass, 0, ssl_free, ssl );
 }
 
+/*
+ *  call-seq:
+ *      set_endpoint( endpoint_mode )
+ *
+ *  Sets the endpoint mode for the current SSL context. This allows you to set
+ *  your SSL context to be a client or server. Possible values are:
+ *
+ *  * PolarSSL::SSL::SSL_IS_CLIENT
+ */
 static VALUE R_ssl_set_endpoint( VALUE self, VALUE endpoint_mode )
 {
     ssl_context *ssl;

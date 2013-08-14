@@ -1,5 +1,6 @@
 require 'rake/testtask'
 require 'rake/clean'
+require 'sdoc'
 
 NAME = "polarssl"
 DLEXT = RbConfig::CONFIG['DLEXT']
@@ -20,6 +21,17 @@ CLOBBER.include("lib/**/*.#{DLEXT}")
 
 Rake::TestTask.new do |t|
   t.pattern = "test/*_test.rb"
+end
+
+RDOC_FILES = FileList["RDOC_MAIN.rdoc", "ext/*"]
+
+RDoc::Task.new do |rd|
+  rd.rdoc_dir = "doc"
+  rd.main = "RDOC_MAIN.rdoc"
+  rd.rdoc_files.include(RDOC_FILES)
+  rd.options << '-e' << 'UTF-8'
+  rd.options << '-f' << 'sdoc'
+  rd.options << '-T' << 'sdoc'
 end
 
 task default: :test
