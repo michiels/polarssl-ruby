@@ -23,9 +23,13 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
 
     ssl.write("GET / HTTP/1.0\r\nHost: polarssl.org\r\n\r\n")
 
+    response = ""
+
     while chunk = ssl.read(1024)
-      puts chunk
+      response << chunk
     end
+
+    assert response.length > 0
 
     ssl.close_notify
 
