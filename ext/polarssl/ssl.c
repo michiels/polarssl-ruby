@@ -10,7 +10,6 @@ VALUE e_NetWantRead;
 VALUE e_NetWantWrite;
 VALUE e_SSLError;
 
-static void R_ssl_mark();
 static VALUE R_ssl_allocate();
 static VALUE R_ssl_set_endpoint();
 static VALUE R_ssl_set_authmode();
@@ -73,11 +72,7 @@ static VALUE R_ssl_allocate(VALUE klass)
 
   // ssl_set_dbg(ssl, my_debug, stdout);
 
-  return Data_Wrap_Struct(klass, R_ssl_mark, ssl_free, ssl);
-}
-
-static void R_ssl_mark() {
-
+  return Data_Wrap_Struct(klass, 0, ssl_free, ssl);
 }
 
 static VALUE R_ssl_set_endpoint(VALUE self, VALUE endpoint_mode)
