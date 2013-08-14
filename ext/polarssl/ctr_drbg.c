@@ -11,7 +11,6 @@ static VALUE R_ctr_drbg_self_test();
 void Init_ctr_drbg()
 {
   VALUE cCtrDrbg = rb_define_class_under(mPolarSSL, "CtrDrbg", rb_cObject);
-  VALUE e_EntropySourceFailed = rb_define_class_under(mPolarSSL, "EntropySourceFailed", rb_eStandardError);
 
   rb_define_singleton_method(cCtrDrbg, "self_test", R_ctr_drbg_self_test, 0);
 

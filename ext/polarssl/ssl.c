@@ -12,7 +12,6 @@ VALUE e_SSLError;
 
 static void R_ssl_mark();
 static VALUE R_ssl_allocate();
-static VALUE R_ssl_initialize();
 static VALUE R_ssl_set_endpoint();
 static VALUE R_ssl_set_authmode();
 static VALUE R_ssl_set_rng();
@@ -191,7 +190,7 @@ static VALUE R_ssl_read(VALUE self, VALUE length)
   VALUE result;
 
   int buffer_size = NUM2INT(length);
-  char buffer[buffer_size];
+  unsigned char buffer[buffer_size];
 
   int length_to_read = sizeof(buffer) - 1;
   int length_read = ssl_read(ssl, buffer, length_to_read);
@@ -201,7 +200,7 @@ static VALUE R_ssl_read(VALUE self, VALUE length)
   } else if (length_read < 0) {
     rb_raise(e_SSLError, "-0x%x", -length_read);
   } else {
-    result = rb_str_new2(buffer);
+    result = rb_str_new2((char *) buffer);
   }
 
   return result;
