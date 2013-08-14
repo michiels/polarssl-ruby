@@ -1,5 +1,7 @@
 require 'mkmf'
 
+$CFLAGS = "-g -Wall" + $CFLAGS
+
 unless find_header('polarssl/entropy.h')
   abort "libpolarssl is missing. please install libpolarssl"
 end

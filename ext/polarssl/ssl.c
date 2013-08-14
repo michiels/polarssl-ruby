@@ -66,14 +66,13 @@ static VALUE R_ssl_allocate(VALUE klass)
   }
 
   #if POLARSSL_VERSION_MINOR == 1
-    printf("POLAR 1.1.4");
     ssl_session *ssn;
     ssn = ALLOC(ssl_session);
     ssl_set_session(ssl, 0, 600, ssn);
     ssl_set_ciphersuites(ssl, ssl_default_ciphersuites);
   #endif
 
-  ssl_set_dbg(ssl, my_debug, stdout);
+  // ssl_set_dbg(ssl, my_debug, stdout);
 
   return Data_Wrap_Struct(klass, R_ssl_mark, ssl_free, ssl);
 }
@@ -131,8 +130,6 @@ static VALUE R_ssl_set_bio(VALUE self, VALUE recv_func, VALUE input_socket, VALU
 
   rb_io_t *fptr;
   GetOpenFile(input_socket, fptr);
-
-  rb_ivar_set(self, rb_intern("socket"), input_socket);
 
   ssl_set_bio(ssl, net_recv, &fptr->fd, net_send, &fptr->fd);
 
@@ -194,7 +191,7 @@ static VALUE R_ssl_read(VALUE self, VALUE length)
   VALUE result;
 
   int buffer_size = NUM2INT(length);
-  unsigned char buffer[buffer_size];
+  char buffer[buffer_size];
 
   int length_to_read = sizeof(buffer) - 1;
   int length_read = ssl_read(ssl, buffer, length_to_read);

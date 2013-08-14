@@ -4,10 +4,7 @@ require 'socket'
 class SSLConnectionTest < MiniTest::Unit::TestCase
 
   def test_simple_connection
-    GC.stress = true
     socket = TCPSocket.new('polarssl.org', 443)
-
-    GC.start
 
     entropy = PolarSSL::Entropy.new
 
@@ -29,8 +26,6 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
     while chunk = ssl.read(1024)
       puts chunk
     end
-
-    puts "--- meh ---   "
 
     ssl.close_notify
 
