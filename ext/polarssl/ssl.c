@@ -67,9 +67,10 @@ static VALUE R_ssl_allocate(VALUE klass)
     rb_raise(e_MallocFailed, "ssl_init() memory allocation failed.");
   }
 
-  #if POLARSSL_VERSION_MINOR == 1
+  #if POLARSSL_VERSION_MAJOR == 1 && POLARSSL_VERSION_MINOR == 1
     ssl_session ssn;
-    ssl_set_session(ssl, 0, 600, &ssn);
+    ssn = ALLOC(ssl_session);
+    ssl_set_session(ssl, 0, 600, ssn);
     ssl_set_ciphersuites(ssl, ssl_default_ciphersuites);
   #endif
 
