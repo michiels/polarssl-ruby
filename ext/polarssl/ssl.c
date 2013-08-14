@@ -64,9 +64,8 @@ static VALUE R_ssl_allocate(VALUE klass)
   }
 
   #if POLARSSL_VERSION_MINOR == 1
-    ssl_session *ssn;
-    ssn = ALLOC(ssl_session);
-    ssl_set_session(ssl, 0, 600, ssn);
+    ssl_session ssn;
+    ssl_set_session(ssl, 0, 600, &ssn);
     ssl_set_ciphersuites(ssl, ssl_default_ciphersuites);
   #endif
 
