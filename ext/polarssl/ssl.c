@@ -38,7 +38,6 @@ static VALUE R_ssl_allocate();
 static VALUE R_ssl_set_endpoint();
 static VALUE R_ssl_set_authmode();
 static VALUE R_ssl_set_rng();
-static VALUE R_ssl_set_bio();
 static VALUE R_ssl_set_socket();
 static VALUE R_ssl_handshake();
 static VALUE R_ssl_write();
@@ -70,7 +69,6 @@ void Init_ssl(void)
     rb_define_method( cSSL, "set_endpoint", R_ssl_set_endpoint, 1 );
     rb_define_method( cSSL, "set_authmode", R_ssl_set_authmode, 1 );
     rb_define_method( cSSL, "set_rng", R_ssl_set_rng, 1 );
-    rb_define_method( cSSL, "set_bio", R_ssl_set_bio, 4 );
     rb_define_method( cSSL, "set_socket", R_ssl_set_socket, 1);
     rb_define_method( cSSL, "handshake", R_ssl_handshake, 0 );
     rb_define_method( cSSL, "write", R_ssl_write, 1 );
@@ -152,23 +150,6 @@ static VALUE R_ssl_set_rng( VALUE self, VALUE rng )
     Data_Get_Struct( rng, ctr_drbg_context, ctr_drbg );
 
     ssl_set_rng( ssl, ctr_drbg_random, ctr_drbg );
-
-    return Qtrue;
-}
-
-static VALUE R_ssl_set_bio( VALUE self, VALUE recv_func, VALUE input_socket, VALUE send_func, VALUE output_socket )
-{
-    ssl_context *ssl;
-    rb_io_t *fptr;
-
-    Check_Type( input_socket, T_FILE );
-    Check_Type( output_socket, T_FILE );
-
-    Data_Get_Struct( self, ssl_context, ssl );
-
-    GetOpenFile( input_socket, fptr );
-
-    ssl_set_bio( ssl, net_recv, &fptr->fd, net_send, &fptr->fd );
 
     return Qtrue;
 }
