@@ -39,6 +39,7 @@ static VALUE R_ssl_set_endpoint();
 static VALUE R_ssl_set_authmode();
 static VALUE R_ssl_set_rng();
 static VALUE R_ssl_set_bio();
+static VALUE R_ssl_set_socket();
 static VALUE R_ssl_handshake();
 static VALUE R_ssl_write();
 static VALUE R_ssl_read();
@@ -50,17 +51,12 @@ void my_debug( void *ctx, int level, const char *str )
     fprintf( (FILE *)ctx, "%s", str );
 }
 
-extern void Init_ssl()
+void Init_ssl(void)
 {
-    VALUE cSSL;
+    VALUE cSSL = rb_define_class_under( mPolarSSL, "SSL", rb_cObject );
 
     e_MallocFailed = rb_define_class_under( mPolarSSL, "MallocFailed", rb_eStandardError );
     e_NetWantRead = rb_define_class_under( mPolarSSL, "NetWantRead", rb_eStandardError );
-
-    /*
-     * Class +SSL+ provides the core functionality to set up secure connections.
-     */
-    cSSL = rb_define_class_under( mPolarSSL, "SSL", rb_cObject );
 
     e_SSLError = rb_define_class_under( cSSL, "Error", rb_eRuntimeError );
 
@@ -75,6 +71,7 @@ extern void Init_ssl()
     rb_define_method( cSSL, "set_authmode", R_ssl_set_authmode, 1 );
     rb_define_method( cSSL, "set_rng", R_ssl_set_rng, 1 );
     rb_define_method( cSSL, "set_bio", R_ssl_set_bio, 4 );
+    rb_define_method( cSSL, "set_socket", R_ssl_set_socket, 1);
     rb_define_method( cSSL, "handshake", R_ssl_handshake, 0 );
     rb_define_method( cSSL, "write", R_ssl_write, 1 );
     rb_define_method( cSSL, "read", R_ssl_read, 1 );
@@ -170,6 +167,22 @@ static VALUE R_ssl_set_bio( VALUE self, VALUE recv_func, VALUE input_socket, VAL
     Data_Get_Struct( self, ssl_context, ssl );
 
     GetOpenFile( input_socket, fptr );
+
+    ssl_set_bio( ssl, net_recv, &fptr->fd, net_send, &fptr->fd );
+
+    return Qtrue;
+}
+
+static VALUE R_ssl_set_socket( VALUE self, VALUE socket )
+{
+    ssl_context *ssl;
+    rb_io_t *fptr;
+
+    Check_Type( socket, T_FILE );
+
+    Data_Get_Struct( self, ssl_context, ssl );
+
+    GetOpenFile( socket, fptr );
 
     ssl_set_bio( ssl, net_recv, &fptr->fd, net_send, &fptr->fd );
 

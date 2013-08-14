@@ -4,6 +4,7 @@ require 'socket'
 class SSLConnectionTest < MiniTest::Unit::TestCase
 
   def test_simple_connection
+
     socket = TCPSocket.new('polarssl.org', 443)
 
     entropy = PolarSSL::Entropy.new
@@ -16,8 +17,7 @@ class SSLConnectionTest < MiniTest::Unit::TestCase
     ssl.set_authmode(PolarSSL::SSL::SSL_VERIFY_NONE)
     ssl.set_rng(ctr_drbg)
 
-    # # TODO: Implement passing methods/procs to people can define their own send/recv methods
-    ssl.set_bio(Proc.new { |fp| }, socket, Proc.new { |fp| }, socket)
+    ssl.set_socket(socket)
 
     ssl.handshake
 

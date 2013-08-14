@@ -23,11 +23,12 @@ Rake::TestTask.new do |t|
   t.pattern = "test/*_test.rb"
 end
 
-RDOC_FILES = FileList["RDOC_MAIN.rdoc", "ext/*"]
+RDOC_FILES = FileList["RDOC_MAIN.rdoc", "ext/polarssl/*.c"]
 
 RDoc::Task.new do |rd|
   rd.rdoc_dir = "doc"
   rd.main = "RDOC_MAIN.rdoc"
+  rd.title = "PolarSSL Ruby API"
   rd.rdoc_files.include(RDOC_FILES)
   rd.options << '-e' << 'UTF-8'
   rd.options << '-f' << 'sdoc'

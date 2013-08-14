@@ -14,7 +14,7 @@
   ssl.set_authmode(PolarSSL::SSL::SSL_VERIFY_NONE)
   ssl.set_rng(ctr_drbg)
 
-  ssl.set_bio(Proc.new { }, socket, Proc.new {}, socket)
+  ssl.set_socket(socket)
 
   ssl.handshake
 
