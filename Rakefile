@@ -1,6 +1,7 @@
 require 'rake/testtask'
 require 'rake/clean'
 require 'sdoc'
+require 'grancher/task'
 
 NAME = "polarssl"
 DLEXT = RbConfig::CONFIG['DLEXT']
@@ -33,6 +34,13 @@ RDoc::Task.new do |rd|
   rd.options << '-e' << 'UTF-8'
   rd.options << '-f' << 'sdoc'
   rd.options << '-T' << 'sdoc'
+end
+
+Grancher::Task.new do |g|
+  g.branch = 'gh-pages'
+  g.push_to 'origin'
+  g.message = 'Updated website'
+  g.directory 'doc', 'doc'
 end
 
 task default: :test
