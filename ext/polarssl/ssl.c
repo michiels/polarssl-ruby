@@ -54,6 +54,38 @@ void Init_ssl(void)
 {
     /* Document-class: PolarSSL::SSL
      * This class is the base for doing SSL communication over a socket.
+     *
+     * == Sample
+     *
+     *      require 'polarssl'
+     *
+     *      socket = TCPSocket.new('polarssl.org', 443)
+     *
+     *      entropy = PolarSSL::Entropy.new
+     *      ctr_drbg = PolarSSL::CtrDrbg.new(entropy)
+     *      ssl = PolarSSL::SSL.new
+     *
+     *      ssl.set_endpoint(PolarSSL::SSL::SSL_IS_CLIENT)
+     *      ssl.set_authmode(PolarSSL::SSL::SSL_VERIFY_NONE)
+     *      ssl.set_rng(ctr_drbg)
+     *
+     *      ssl.set_socket(socket)
+     *
+     *      ssl.handshake
+     *
+     *      ssl.write("GET / HTTP/1.0\r\nHost: polarssl.org\r\n\r\n")
+     *
+     *      while chunk = ssl.read(1024)
+     *          response << chunk
+     *      end
+     *
+     *      puts response
+     *
+     *      ssl.close_notify
+     *
+     *      socket.close
+     *
+     *      ssl.close
      */
     VALUE cSSL = rb_define_class_under( rb_mPolarSSL, "SSL", rb_path2class("Object") );
 
