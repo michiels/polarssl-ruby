@@ -1,3 +1,3 @@
 #include "ruby.h"
 
-extern VALUE mPolarSSL;
+extern VALUE rb_mPolarSSL;

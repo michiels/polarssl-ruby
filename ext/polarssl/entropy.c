@@ -31,7 +31,7 @@ static VALUE R_entropy_gather();
 
 void Init_entropy()
 {
-  VALUE cEntropy = rb_define_class_under( mPolarSSL, "Entropy", rb_cObject );
+  VALUE cEntropy = rb_define_class_under( rb_mPolarSSL, "Entropy", rb_cObject );
 
   rb_define_alloc_func( cEntropy, R_entropy_allocate );
   rb_define_method( cEntropy, "initialize", R_entropy_initialize, 0 );

@@ -52,17 +52,49 @@ void my_debug( void *ctx, int level, const char *str )
 
 void Init_ssl(void)
 {
-    VALUE cSSL = rb_define_class_under( mPolarSSL, "SSL", rb_cObject );
+    /* Document-class: PolarSSL::SSL
+     * This class is the base for doing SSL communication over a socket.
+     */
+    VALUE cSSL = rb_define_class_under( rb_mPolarSSL, "SSL", rb_path2class("Object") );
 
-    e_MallocFailed = rb_define_class_under( mPolarSSL, "MallocFailed", rb_eStandardError );
-    e_NetWantRead = rb_define_class_under( mPolarSSL, "NetWantRead", rb_eStandardError );
+    /* Document-class: PolarSSL::MallocFailed
+     * Raised when not enough memory can be allocated for initializing the ssl context with ssl_init();
+     */
+    e_MallocFailed = rb_define_class_under( rb_mPolarSSL, "MallocFailed", rb_path2class("StandardError") );
 
+    /* Document-class: PolarSSL::NetWantRead
+     * Raised when the ssl connection expects a read.
+     */
+    e_NetWantRead = rb_define_class_under( rb_mPolarSSL, "NetWantRead", rb_eStandardError );
+
+    /* Document-class: PolarSSL::NetWantWrite
+     * Raised when the ssl connection expects a write.
+     */
+    e_NetWantWrite = rb_define_class_under( rb_mPolarSSL, "NetWantWrite", rb_eStandardError );
+
+    /* Document-class: PolarSSL::SSL::Error
+     * Raised when an SSL error occurs.
+     */
     e_SSLError = rb_define_class_under( cSSL, "Error", rb_eRuntimeError );
 
-    /* 0: Constant to set endpoint as client. */
+    /*
+     * 0: Endpoint mode for acting as a client.
+     */
     rb_define_const( cSSL, "SSL_IS_CLIENT", INT2NUM( SSL_IS_CLIENT ) );
 
+    /*
+     * 0: Certificate verification mode for doing no verification.
+     */
     rb_define_const( cSSL, "SSL_VERIFY_NONE", INT2NUM( SSL_VERIFY_NONE ) );
+
+    /*
+     * 1: Certificate verification mode for optional verification.
+     */
+    rb_define_const( cSSL, "SSL_VERIFY_OPTIONAL", INT2NUM( SSL_VERIFY_OPTIONAL ) );
+
+    /*
+     * 2: Certificate verification mode for having required verification.
+     */
     rb_define_const( cSSL, "SSL_VERIFY_REQUIRED", INT2NUM( SSL_VERIFY_REQUIRED ) );
 
     rb_define_alloc_func( cSSL, R_ssl_allocate );
