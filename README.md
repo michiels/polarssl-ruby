@@ -1,17 +1,56 @@
-polarssl-ruby
-=============
+PolarSSL for Ruby
+=================
 
-Use PolarSSL in your Rubies. Ruby wrapper for the PolarSSL cryptographic and SSL/TLS library.
+* API documentation: http://michiels.github.io/polarssl-ruby/doc
 
-## Ruby Version
+## Description
 
-Developed on Ruby 2.0.0
+With PolarSSL for Ruby, you can use SSL and cryptography functionality from PolarSSL in your Ruby programs.
 
-## PolarSSL Version
+## Features
 
-Developed on PolarSSL 1.2.7
+* Set up encrypted SSL connections.
 
-## Development
+## Installation
+
+```
+gem install polarssl
+```
+
+## Usage
+
+```ruby
+require 'polarssl'
+
+socket = TCPSocket.new('polarssl', 443)
+
+entropy = PolarSSL::Entropy.new
+ctr_drbg = PolarSSL::CtrDrbg.new(entropy)
+
+ssl = PolarSSL::SSL.new
+ssl.set_endpoint(PolarSSL::SSL::SSL_IS_CLIENT)
+ssl.set_authmode(PolarSSL::SSL::SSL_VERIFY_NONE)
+ssl.set_rng(ctr_drbg)
+ssl.set_socket(socket)
+
+ssl.handshake
+
+ssl.write("GET / HTTP/1.0\r\nHost: polarssl.org\r\n\r\n")
+
+while chunk = ssl.read(1024)
+  response << chunk
+end
+
+puts response
+
+ssl.close_notify
+
+socket.close
+
+ssl.close
+```
+
+## Contributing
 
 Install PolarSSL from source via https://polarssl.org/download or install it using your operating system. For example:
 
