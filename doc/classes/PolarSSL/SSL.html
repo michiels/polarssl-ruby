@@ -24,7 +24,7 @@
             
                 <span class="parent">&lt; 
                     
-                    rb_cObject 
+                    Object
                     
                 </span>
             
@@ -37,6 +37,46 @@
     </div>
     <div id="bodyContent">
         <div id="content">
+  
+    <div class="description">
+      
+<p>This class is the base for doing <a href="SSL.html">SSL</a> communication
+over a socket.</p>
+
+<h2 id="label-Sample">Sample</h2>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;polarssl&#39;</span>
+
+<span class="ruby-identifier">socket</span> = <span class="ruby-constant">TCPSocket</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;polarssl.org&#39;</span>, <span class="ruby-value">443</span>)
+
+<span class="ruby-identifier">entropy</span> = <span class="ruby-constant">PolarSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">Entropy</span>.<span class="ruby-identifier">new</span>
+<span class="ruby-identifier">ctr_drbg</span> = <span class="ruby-constant">PolarSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">CtrDrbg</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">entropy</span>)
+<span class="ruby-identifier">ssl</span> = <span class="ruby-constant">PolarSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">SSL</span>.<span class="ruby-identifier">new</span>
+
+<span class="ruby-identifier">ssl</span>.<span class="ruby-identifier">set_endpoint</span>(<span class="ruby-constant">PolarSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">SSL</span><span class="ruby-operator">::</span><span class="ruby-constant">SSL_IS_CLIENT</span>)
+<span class="ruby-identifier">ssl</span>.<span class="ruby-identifier">set_authmode</span>(<span class="ruby-constant">PolarSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">SSL</span><span class="ruby-operator">::</span><span class="ruby-constant">SSL_VERIFY_NONE</span>)
+<span class="ruby-identifier">ssl</span>.<span class="ruby-identifier">set_rng</span>(<span class="ruby-identifier">ctr_drbg</span>)
+
+<span class="ruby-identifier">ssl</span>.<span class="ruby-identifier">set_socket</span>(<span class="ruby-identifier">socket</span>)
+
+<span class="ruby-identifier">ssl</span>.<span class="ruby-identifier">handshake</span>
+
+<span class="ruby-identifier">ssl</span>.<span class="ruby-identifier">write</span>(<span class="ruby-string">&quot;GET / HTTP/1.0\r\nHost: polarssl.org\r\n\r\n&quot;</span>)
+
+<span class="ruby-keyword">while</span> <span class="ruby-identifier">chunk</span> = <span class="ruby-identifier">ssl</span>.<span class="ruby-identifier">read</span>(<span class="ruby-value">1024</span>)
+    <span class="ruby-identifier">response</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">chunk</span>
+<span class="ruby-keyword">end</span>
+
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">response</span>
+
+<span class="ruby-identifier">ssl</span>.<span class="ruby-identifier">close_notify</span>
+
+<span class="ruby-identifier">socket</span>.<span class="ruby-identifier">close</span>
+
+<span class="ruby-identifier">ssl</span>.<span class="ruby-identifier">close</span>
+</pre>
+
+    </div>
   
 
 
@@ -172,31 +212,43 @@
           
             <tr valign='top'>
               <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"><p>Constant to set endpoint as client.</p></td>
+              <td colspan="2" class="attr-desc"><p>Endpoint mode for acting as a client.</p></td>
             </tr>
           
         
           <tr valign='top'>
             <td class="attr-name">SSL_VERIFY_NONE</td>
             <td>=</td>
-            <td class="attr-value">INT2NUM( SSL_VERIFY_NONE )</td>
+            <td class="attr-value">0</td>
           </tr>
           
             <tr valign='top'>
               <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
+              <td colspan="2" class="attr-desc"><p>Certificate verification mode for doing no verification.</p></td>
+            </tr>
+          
+        
+          <tr valign='top'>
+            <td class="attr-name">SSL_VERIFY_OPTIONAL</td>
+            <td>=</td>
+            <td class="attr-value">1</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Certificate verification mode for optional verification.</p></td>
             </tr>
           
         
           <tr valign='top'>
             <td class="attr-name">SSL_VERIFY_REQUIRED</td>
             <td>=</td>
-            <td class="attr-value">INT2NUM( SSL_VERIFY_REQUIRED )</td>
+            <td class="attr-value">2</td>
           </tr>
           
             <tr valign='top'>
               <td>&nbsp;</td>
-              <td colspan="2" class="attr-desc"></td>
+              <td colspan="2" class="attr-desc"><p>Certificate verification mode for having required verification.</p></td>
             </tr>
           
         
@@ -214,14 +266,17 @@
         <div class="method">
           <div class="title method-title" id="method-i-close">
             
-              <b>close</b>()
+              <b>close() &rarr; true
+</b>
             
             <a href="../../classes/PolarSSL/SSL.html#method-i-close" name="method-i-close" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              
+              <p>Final method to be called when done using the <a href="SSL.html">SSL</a>
+connection. This immediately frees any <a href="SSL.html">SSL</a> data in
+the memory instead of waiting for the Ruby garbage collector.</p>
             </div>
           
           
@@ -254,14 +309,16 @@
         <div class="method">
           <div class="title method-title" id="method-i-close_notify">
             
-              <b>close_notify</b>()
+              <b>close_notify() &rarr; true or raises
+</b>
             
             <a href="../../classes/PolarSSL/SSL.html#method-i-close_notify" name="method-i-close_notify" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              
+              <p>Notifies the peer to close the connection. true or raises <a
+href="SSL/Error.html">PolarSSL::SSL::Error</a></p>
             </div>
           
           
@@ -298,14 +355,23 @@
         <div class="method">
           <div class="title method-title" id="method-i-handshake">
             
-              <b>handshake</b>()
+              <b>handshake() &rarr; true or exception
+</b>
             
             <a href="../../classes/PolarSSL/SSL.html#method-i-handshake" name="method-i-handshake" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              
+              <p>Initiates <a href="SSL.html">SSL</a> handshake. When something goes wrong,
+raises one of:</p>
+<ul><li>
+<p><a href="NetWantRead.html">PolarSSL::NetWantRead</a>,</p>
+</li><li>
+<p><a href="NetWantWrite.html">PolarSSL::NetWantWrite</a> or</p>
+</li><li>
+<p><a href="SSL/Error.html">PolarSSL::SSL::Error</a></p>
+</li></ul>
             </div>
           
           
@@ -358,14 +424,16 @@
         <div class="method">
           <div class="title method-title" id="method-i-read">
             
-              <b>read</b>(p1)
+              <b>read( length ) &rarr; string or raises
+</b>
             
             <a href="../../classes/PolarSSL/SSL.html#method-i-read" name="method-i-read" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              
+              <p>Reads <code>length</code> bytes from the <a href="SSL.html">SSL</a>
+connection or raises <a href="SSL/Error.html">PolarSSL::SSL::Error</a>.</p>
             </div>
           
           
@@ -420,14 +488,23 @@
         <div class="method">
           <div class="title method-title" id="method-i-set_authmode">
             
-              <b>set_authmode</b>(p1)
+              <b>set_authmode( authentication_mode )
+</b>
             
             <a href="../../classes/PolarSSL/SSL.html#method-i-set_authmode" name="method-i-set_authmode" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              
+              <p>Sets the certificate verification mode for the <a href="SSL.html">SSL</a>
+connection. Possible values are:</p>
+<ul><li>
+<p>PolarSSL::SSL::SSL_VERIFY_NONE</p>
+</li><li>
+<p>PolarSSL::SSL::SSL_VERIFY_OPTIONAL</p>
+</li><li>
+<p>PolarSSL::SSL::SSL_VERIFY_REQUIRED</p>
+</li></ul>
             </div>
           
           
@@ -471,9 +548,8 @@
           
           
             <div class="description">
-              <p>Sets the endpoint mode for the current <a href="SSL.html">SSL</a> context.
-This allows you to set your <a href="SSL.html">SSL</a> context to be a
-client or server. Possible values are:</p>
+              <p>Sets the endpoint mode for the current <a href="SSL.html">SSL</a>
+connection to act as a server or a client. Possible values are:</p>
 <ul><li>
 <p>PolarSSL::SSL::SSL_IS_CLIENT</p>
 </li></ul>
@@ -512,14 +588,24 @@ client or server. Possible values are:</p>
         <div class="method">
           <div class="title method-title" id="method-i-set_rng">
             
-              <b>set_rng</b>(p1)
+              <b>set_rng( random_number_generator )
+</b>
             
             <a href="../../classes/PolarSSL/SSL.html#method-i-set_rng" name="method-i-set_rng" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              
+              <p>Sets the random number generator to be used for this connection. You need
+to use an instance of PolarSSL::CtrDrbg for this. Example:</p>
+
+<pre>entropy = PolarSSL::Entropy.new
+ctr_drbg = PolarSSL::CtrDrbg.new(entropy)
+
+ssl = PolarSSL::SSL.new
+ssl.set_rng(ctr_drbg)
+
+# other ssl connection settings and usage</pre>
             </div>
           
           
@@ -557,14 +643,21 @@ client or server. Possible values are:</p>
         <div class="method">
           <div class="title method-title" id="method-i-set_socket">
             
-              <b>set_socket</b>(p1)
+              <b>set_socket( socket )
+</b>
             
             <a href="../../classes/PolarSSL/SSL.html#method-i-set_socket" name="method-i-set_socket" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              
+              <p>Set the TCPSocket to be used for this <a href="SSL.html">SSL</a>
+connection. Example:</p>
+
+<pre>socket = TCPSocket.new(&#39;polarssl.org&#39;, 443)
+
+ssl = PolarSSL::SSL.new
+ssl.set_socket(socket)</pre>
             </div>
           
           
@@ -603,14 +696,16 @@ client or server. Possible values are:</p>
         <div class="method">
           <div class="title method-title" id="method-i-write">
             
-              <b>write</b>(p1)
+              <b>write( string ) &rarr; true or raises
+</b>
             
             <a href="../../classes/PolarSSL/SSL.html#method-i-write" name="method-i-write" class="permalink">Link</a>
           </div>
           
           
             <div class="description">
-              
+              <p>Writes to the <a href="SSL.html">SSL</a> connection or raises <a
+href="SSL/Error.html">PolarSSL::SSL::Error</a>.</p>
             </div>
           
           

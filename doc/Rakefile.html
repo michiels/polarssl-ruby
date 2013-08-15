@@ -4,7 +4,7 @@
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 
-<title>module PolarSSL - RDoc Documentation</title>
+<title>Rakefile - RDoc Documentation</title>
 
 <link type="text/css" media="screen" href="./rdoc.css" rel="stylesheet">
 
@@ -20,7 +20,7 @@
 <script type="text/javascript" charset="utf-8" src="./js/darkfish.js"></script>
 
 
-<body id="top" class="module">
+<body class="file">
 <nav id="metadata">
   <nav id="home-section" class="section">
   <h3 class="section-header">
@@ -42,24 +42,6 @@
   <ul id="search-results" class="initially-hidden"></ul>
 </nav>
 
-
-  <div id="file-metadata">
-    <nav id="file-list-section" class="section">
-  <h3 class="section-header">Defined In</h3>
-  <ul>
-    <li>ext/polarssl/polarssl.c
-  </ul>
-</nav>
-
-    
-  </div>
-
-  <div id="class-metadata">
-    
-    
-    
-    
-  </div>
 
   <div id="project-metadata">
     <nav id="fileindex-section" class="section project-section">
@@ -111,30 +93,54 @@
   </div>
 </nav>
 
-<div id="documentation">
-  <h1 class="module">module PolarSSL</h1>
-
-  <div id="description" class="description">
-    
-  </div><!-- description -->
-
+<div id="documentation" class="description">
   
-  
-  
-  <section id="5Buntitled-5D" class="documentation-section">
-    
+<p>require &#39;rake/testtask&#39; require &#39;rake/clean&#39; require
+&#39;sdoc&#39;</p>
 
-    
+<p>NAME = “polarssl” DLEXT = <a href="http://'DLEXT'">RbConfig::CONFIG</a></p>
 
-    
+<p>file “lib/#{NAME}/#{NAME}.#{DLEXT}” =&gt; Dir.glob(“ext/#{NAME}  {.rb,.c}”)
+do</p>
 
-    
+<pre>Dir.chdir(&quot;ext/#{NAME}&quot;) do
+  ruby &quot;extconf.rb&quot;
+  sh &quot;make&quot;
+end
+cp &quot;ext/#{NAME}/#{NAME}.#{DLEXT}&quot;, &quot;lib/#{NAME}.#{DLEXT}&quot;</pre>
 
-    <!-- Methods -->
-    
-  </section><!-- 5Buntitled-5D -->
+<p>end</p>
 
-</div><!-- documentation -->
+<p>task test: “lib/#{NAME}/#{NAME}.#{DLEXT}”</p>
+
+<p>CLEAN.include(“ext/   *{.o,.log,.#{DLEXT}}”) CLEAN.include(“ext  
+/Makefile”) CLOBBER.include(“lib/   *.#{DLEXT}”)</p>
+
+<p>Rake::TestTask.new do |t|</p>
+
+<pre>t.pattern = &quot;test/*_test.rb&quot;</pre>
+
+<p>end</p>
+
+<p>RDOC_FILES = FileList[“<a href="RDOC_MAIN_rdoc.html">RDOC_MAIN.rdoc</a>”,
+“ext/polarssl/*.c”]</p>
+
+<p>RDoc::Task.new do |rd|</p>
+
+<pre>rd.rdoc_dir = &quot;doc&quot;
+rd.main = &quot;RDOC_MAIN.rdoc&quot;
+rd.title = &quot;PolarSSL Ruby API&quot;
+rd.rdoc_files.include(RDOC_FILES)
+rd.options &lt;&lt; &#39;-e&#39; &lt;&lt; &#39;UTF-8&#39;
+rd.options &lt;&lt; &#39;-f&#39; &lt;&lt; &#39;sdoc&#39;
+rd.options &lt;&lt; &#39;-T&#39; &lt;&lt; &#39;sdoc&#39;</pre>
+
+<p>end</p>
+
+<p>task default: :test</p>
+
+</div>
+
 
 
 <footer id="validator-badges">

@@ -4,7 +4,7 @@
 <head>
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 
-<title>class PolarSSL::SSL - Meh</title>
+<title>class PolarSSL::SSL - RDoc Documentation</title>
 
 <link type="text/css" media="screen" href="../rdoc.css" rel="stylesheet">
 
@@ -80,11 +80,11 @@
     
     <li><a href="#method-i-set_authmode">#set_authmode</a>
     
-    <li><a href="#method-i-set_bio">#set_bio</a>
-    
     <li><a href="#method-i-set_endpoint">#set_endpoint</a>
     
     <li><a href="#method-i-set_rng">#set_rng</a>
+    
+    <li><a href="#method-i-set_socket">#set_socket</a>
     
     <li><a href="#method-i-write">#write</a>
     
@@ -98,6 +98,14 @@
   <h3 class="section-header">Pages</h3>
 
   <ul>
+  
+    <li class="file"><a href="../COPYING.html">COPYING</a>
+  
+    <li class="file"><a href="../Gemfile.html">Gemfile</a>
+  
+    <li class="file"><a href="../RDOC_MAIN_rdoc.html">RDOC_MAIN</a>
+  
+    <li class="file"><a href="../Rakefile.html">Rakefile</a>
   
     <li class="file"><a href="../ext/polarssl/Makefile.html">Makefile</a>
   
@@ -115,9 +123,19 @@
   
     <li><a href="../PolarSSL/NetWantRead.html">PolarSSL::NetWantRead</a>
   
+    <li><a href="../PolarSSL/NetWantWrite.html">PolarSSL::NetWantWrite</a>
+  
     <li><a href="../PolarSSL/SSL.html">PolarSSL::SSL</a>
   
     <li><a href="../PolarSSL/SSL/Error.html">PolarSSL::SSL::Error</a>
+  
+    <li><a href="../CtrDrbgTest.html">CtrDrbgTest</a>
+  
+    <li><a href="../EntropyTest.html">EntropyTest</a>
+  
+    <li><a href="../SSLConnectionTest.html">SSLConnectionTest</a>
+  
+    <li><a href="../TestVerifyMiniTest.html">TestVerifyMiniTest</a>
   
   </ul>
 </nav>
@@ -130,6 +148,8 @@
 
   <div id="description" class="description">
     
+<p>Document-class: <a href="SSL.html">SSL</a> Meh</p>
+
   </div><!-- description -->
 
   
@@ -148,17 +168,17 @@
       
         <dt id="SSL_IS_CLIENT">SSL_IS_CLIENT
         
-        <dd class="description">
+        <dd class="description"><p>Use connection as client.</p>
         
       
         <dt id="SSL_VERIFY_NONE">SSL_VERIFY_NONE
         
-        <dd class="description">
+        <dd class="description"><p>Do not verify peer certificate</p>
         
       
         <dt id="SSL_VERIFY_REQUIRED">SSL_VERIFY_REQUIRED
         
-        <dd class="description">
+        <dd class="description"><p>Require valid peer certificate</p>
         
       
       </dl>
@@ -397,48 +417,6 @@
       </div><!-- set_authmode-method -->
 
     
-      <div id="method-i-set_bio" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">set_bio</span><span
-            class="method-args">(p1, p2, p3, p4)</span>
-          <span class="method-click-advice">click to toggle source</span>
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-
-          
-          <div class="method-source-code" id="set_bio-source">
-            <pre>static VALUE R_ssl_set_bio( VALUE self, VALUE recv_func, VALUE input_socket, VALUE send_func, VALUE output_socket )
-{
-    ssl_context *ssl;
-    rb_io_t *fptr;
-
-    Check_Type( input_socket, T_FILE );
-    Check_Type( output_socket, T_FILE );
-
-    Data_Get_Struct( self, ssl_context, ssl );
-
-    GetOpenFile( input_socket, fptr );
-
-    ssl_set_bio( ssl, net_recv, &amp;fptr-&gt;fd, net_send, &amp;fptr-&gt;fd );
-
-    return Qtrue;
-}</pre>
-          </div><!-- set_bio-source -->
-          
-        </div>
-
-        
-
-        
-      </div><!-- set_bio-method -->
-
-    
       <div id="method-i-set_endpoint" class="method-detail ">
         
         
@@ -458,8 +436,9 @@
           <p>Sets the endpoint mode for the current <a href="SSL.html">SSL</a> context.
 This allows you to set your <a href="SSL.html">SSL</a> context to be a
 client or server. Possible values are:</p>
-
+<ul><li>
 <p>PolarSSL::SSL::SSL_IS_CLIENT</p>
+</li></ul>
           
 
           
@@ -524,6 +503,47 @@ client or server. Possible values are:</p>
 
         
       </div><!-- set_rng-method -->
+
+    
+      <div id="method-i-set_socket" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">set_socket</span><span
+            class="method-args">(p1)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="set_socket-source">
+            <pre>static VALUE R_ssl_set_socket( VALUE self, VALUE socket )
+{
+    ssl_context *ssl;
+    rb_io_t *fptr;
+
+    Check_Type( socket, T_FILE );
+
+    Data_Get_Struct( self, ssl_context, ssl );
+
+    GetOpenFile( socket, fptr );
+
+    ssl_set_bio( ssl, net_recv, &amp;fptr-&gt;fd, net_send, &amp;fptr-&gt;fd );
+
+    return Qtrue;
+}</pre>
+          </div><!-- set_socket-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- set_socket-method -->
 
     
       <div id="method-i-write" class="method-detail ">
