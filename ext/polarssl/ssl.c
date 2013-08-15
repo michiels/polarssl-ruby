@@ -140,8 +140,8 @@ static VALUE R_ssl_allocate( VALUE klass )
  *  call-seq:
  *      set_endpoint( endpoint_mode )
  *
- *  Sets the endpoint mode for the current SSL context. This allows you to set
- *  your SSL context to be a client or server. Possible values are:
+ *  Sets the endpoint mode for the current SSL connection to act as a server or a client.
+ *  Possible values are:
  *
  *  * PolarSSL::SSL::SSL_IS_CLIENT
  */
@@ -158,6 +158,17 @@ static VALUE R_ssl_set_endpoint( VALUE self, VALUE endpoint_mode )
     return Qtrue;
 }
 
+/*
+ *  call-seq:
+ *      set_authmode( authentication_mode )
+ *
+ *  Sets the certificate verification mode for the SSL connection.
+ *  Possible values are:
+ *
+ *  * PolarSSL::SSL::SSL_VERIFY_NONE
+ *  * PolarSSL::SSL::SSL_VERIFY_OPTIONAL
+ *  * PolarSSL::SSL::SSL_VERIFY_REQUIRED
+ */
 static VALUE R_ssl_set_authmode( VALUE self, VALUE authmode )
 {
     ssl_context *ssl;
@@ -171,6 +182,22 @@ static VALUE R_ssl_set_authmode( VALUE self, VALUE authmode )
     return Qtrue;
 }
 
+/*
+ *  call-seq:
+ *      set_rng( random_number_generator )
+ *
+ *  Sets the random number generator to be used for this connection. You need to use
+ *  an instance of PolarSSL::CtrDrbg for this. Example:
+ *
+ *      entropy = PolarSSL::Entropy.new
+ *      ctr_drbg = PolarSSL::CtrDrbg.new(entropy)
+ *
+ *      ssl = PolarSSL::SSL.new
+ *      ssl.set_rng(ctr_drbg)
+ *
+ *      # other ssl connection settings and usage
+ *
+ */
 static VALUE R_ssl_set_rng( VALUE self, VALUE rng )
 {
     ssl_context *ssl;
@@ -186,6 +213,18 @@ static VALUE R_ssl_set_rng( VALUE self, VALUE rng )
     return Qtrue;
 }
 
+/*
+ *  call-seq:
+ *      set_socket( socket )
+ *
+ *  Set the TCPSocket to be used for this SSL connection. Example:
+ *
+ *      socket = TCPSocket.new('polarssl.org', 443)
+ *
+ *      ssl = PolarSSL::SSL.new
+ *      ssl.set_socket(socket)
+ *
+ */
 static VALUE R_ssl_set_socket( VALUE self, VALUE socket )
 {
     ssl_context *ssl;
@@ -202,6 +241,16 @@ static VALUE R_ssl_set_socket( VALUE self, VALUE socket )
     return Qtrue;
 }
 
+/*
+ *  call-seq:
+ *      handshake() -> true or exception
+ *
+ *  Initiates SSL handshake. When something goes wrong, raises one of:
+ *
+ *  * PolarSSL::NetWantRead,
+ *  * PolarSSL::NetWantWrite or
+ *  * PolarSSL::SSL::Error
+ */
 static VALUE R_ssl_handshake(VALUE self)
 {
     ssl_context *ssl;
@@ -232,6 +281,12 @@ static VALUE R_ssl_handshake(VALUE self)
     }
 }
 
+/*
+ *  call-seq:
+ *      write( string ) -> true or raises
+ *
+ *  Writes to the SSL connection or raises PolarSSL::SSL::Error.
+ */
 static VALUE R_ssl_write( VALUE self, VALUE string )
 {
     ssl_context *ssl;
@@ -252,6 +307,12 @@ static VALUE R_ssl_write( VALUE self, VALUE string )
     return Qtrue;
 }
 
+/*
+ *  call-seq:
+ *      read( length ) -> string or raises
+ *
+ *  Reads +length+ bytes from the SSL connection or raises PolarSSL::SSL::Error.
+ */
 static VALUE R_ssl_read( VALUE self, VALUE length )
 {
     ssl_context *ssl;
@@ -284,6 +345,12 @@ static VALUE R_ssl_read( VALUE self, VALUE length )
     return result;
 }
 
+/*
+ *  call-seq:
+ *      close_notify() -> true or raises
+ *
+ *  Notifies the peer to close the connection. true or raises PolarSSL::SSL::Error
+ */
 static VALUE R_ssl_close_notify( VALUE self )
 {
     ssl_context *ssl;
@@ -298,6 +365,13 @@ static VALUE R_ssl_close_notify( VALUE self )
     return Qtrue;
 }
 
+/*
+ *  call-seq:
+ *      close() -> true
+ *
+ *  Final method to be called when done using the SSL connection. This immediately frees
+ *  any SSL data in the memory instead of waiting for the Ruby garbage collector.
+ */
 static VALUE R_close( VALUE self )
 {
     ssl_context *ssl;
