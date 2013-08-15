@@ -19,6 +19,10 @@ gem install polarssl
 
 ## Usage
 
+This gem provides a pretty low level interface to the native PolarSSL C library.
+The core API aims to reflect the PolarSSL library as much as possible. See the
+[full API documentation](http://michiels.github.io/polarssl-ruby/doc/) for all classes and methods.
+
 ```ruby
 require 'polarssl'
 
