@@ -1,3 +1,9 @@
+*Please note*:
+PolarSSL itself is released as GPL or a Commercial License.
+You will need to take this into account when using PolarSSL and this Gem in your
+own software.
+
+======
                    GNU LESSER GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
