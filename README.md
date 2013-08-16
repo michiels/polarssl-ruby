@@ -89,7 +89,7 @@ Tools used when developing:
 ## License
 
 *Please note*: PolarSSL itself is released as GPL or a Commercial License.
-You will need to take this into account when using PolarSSL and this Gem in your
+You will need to take this into account when using PolarSSL and this Ruby extension in your
 own software.
 
 ```
