@@ -32,3 +32,5 @@ lib/polarssl
 *.o
 
 *.bundle
+
+*.sublime-workspace
