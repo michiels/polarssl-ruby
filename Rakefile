@@ -8,6 +8,7 @@ DLEXT = RbConfig::CONFIG['DLEXT']
 
 CLEAN.include("ext/**/*{.o,.log,.#{DLEXT}}")
 CLEAN.include("ext/**/Makefile")
+CLEAN.include("doc/**")
 CLOBBER.include("lib/**/*.#{DLEXT}")
 
 Rake::TestTask.new do |t|
@@ -17,7 +18,7 @@ end
 
 task test: :compile
 
-RDOC_FILES = FileList["RDOC_MAIN.rdoc", "ext/polarssl/*.c"]
+RDOC_FILES = FileList["RDOC_MAIN.rdoc", "ext/polarssl/*.c", "lib/**/*.rb"]
 
 RDoc::Task.new do |rd|
   rd.rdoc_dir = "doc"
