@@ -2,6 +2,7 @@ PolarSSL for Ruby
 =================
 
 * API documentation: http://michiels.github.io/polarssl-ruby/doc
+* RubyGems.org: http://rubygems.org/gems/polarssl
 
 ## Description
 
