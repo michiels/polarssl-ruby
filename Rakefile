@@ -14,7 +14,6 @@ CLOBBER.include("lib/**/*.#{DLEXT}")
 Rake::TestTask.new do |t|
   t.pattern = "test/*_test.rb"
   t.libs << 'test'
-  t.libs << 'lib'
 end
 
 task test: :compile
