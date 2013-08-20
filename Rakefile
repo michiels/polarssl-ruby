@@ -1,27 +1,21 @@
 require 'rake/testtask'
+require 'rake/extensiontask'
 require 'rake/clean'
 require 'sdoc'
 
 NAME = "polarssl"
 DLEXT = RbConfig::CONFIG['DLEXT']
 
-file "lib/#{NAME}/#{NAME}.#{DLEXT}" => Dir.glob("ext/#{NAME}/*{.rb,.c}") do
-  Dir.chdir("ext/#{NAME}") do
-    ruby "extconf.rb"
-    sh "make"
-  end
-  cp "ext/#{NAME}/#{NAME}.#{DLEXT}", "lib/#{NAME}.#{DLEXT}"
-end
-
-task test: "lib/#{NAME}/#{NAME}.#{DLEXT}"
-
 CLEAN.include("ext/**/*{.o,.log,.#{DLEXT}}")
 CLEAN.include("ext/**/Makefile")
 CLOBBER.include("lib/**/*.#{DLEXT}")
 
 Rake::TestTask.new do |t|
+  t.libs << "polarssl"
   t.pattern = "test/*_test.rb"
 end
+
+task test: :compile
 
 RDOC_FILES = FileList["RDOC_MAIN.rdoc", "ext/polarssl/*.c"]
 
@@ -33,6 +27,10 @@ RDoc::Task.new do |rd|
   rd.options << '-e' << 'UTF-8'
   rd.options << '-f' << 'sdoc'
   rd.options << '-T' << 'sdoc'
+end
+
+Rake::ExtensionTask.new "polarssl" do |ext|
+  ext.lib_dir = "lib/polarssl"
 end
 
 task default: :test

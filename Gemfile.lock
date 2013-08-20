@@ -3,6 +3,8 @@ GEM
   specs:
     json (1.8.0)
     rake (10.0.4)
+    rake-compiler (0.9.1)
+      rake
     rdoc (3.12.2)
       json (~> 1.4)
     sdoc (0.3.20)
@@ -14,4 +16,5 @@ PLATFORMS
 
 DEPENDENCIES
   rake
+  rake-compiler
   sdoc
