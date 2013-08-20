@@ -1,7 +1,3 @@
-$:.unshift File.expand_path("../lib", __FILE__)
-
-require 'rubygems'
-
 require 'rake/testtask'
 require 'rake/extensiontask'
 require 'rake/clean'
