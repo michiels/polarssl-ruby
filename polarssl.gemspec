@@ -1,8 +1,11 @@
-require 'lib/polarssl/polarssl'
+lib = File.expand_path("../lib", __FILE__)
+$:.unshift lib unless $:.include?(lib)
+
+require 'polarssl/version'
 
 Gem::Specification.new do |s|
   s.name = 'polarssl'
-  s.version = '0.0.1'
+  s.version = PolarSSL::VERSION
   s.date = '2013-08-20'
   s.summary = 'Use the PolarSSL cryptographic and SSL library in Ruby.'
   s.description = 'A gem that lets you use the PolarSSL cryptography library with Ruby.'
