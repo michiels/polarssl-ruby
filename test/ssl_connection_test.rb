@@ -1,4 +1,4 @@
-require_relative 'test_helper'
+require 'test_helper'
 require 'socket'
 
 class SSLConnectionTest < MiniTest::Unit::TestCase
