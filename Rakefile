@@ -12,7 +12,6 @@ CLEAN.include("doc/**")
 CLOBBER.include("lib/**/*.#{DLEXT}")
 
 Rake::TestTask.new do |t|
-  t.libs << "polarssl"
   t.pattern = "test/*_test.rb"
 end
 
