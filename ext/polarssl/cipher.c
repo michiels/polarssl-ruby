@@ -1,5 +1,5 @@
 /*
- *  Wrapping code and entrypoint for the PolarSSL module.
+ *  Wrapping code for the PolarSSL::Cipher class.
  *
  *  Copyright (C) 2013  Michiel Sikkes
  *
@@ -21,21 +21,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ #include "polarssl.h"
 
-#include "ruby.h"
-#include "entropy.h"
-#include "ctr_drbg.h"
-#include "ssl.h"
-#include "cipher.h"
-
-VALUE rb_mPolarSSL;
-
-void Init_polarssl()
+void Init_cipher()
 {
-  rb_mPolarSSL = rb_define_module( "PolarSSL" );
-
-  Init_entropy( );
-  Init_ctr_drbg( );
-  Init_ssl( );
-  Init_cipher( );
+  VALUE cCipher = rb_define_class_under( rb_mPolarSSL, "Cipher", rb_cObject);
 }
