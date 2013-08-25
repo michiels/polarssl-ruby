@@ -118,5 +118,10 @@ VALUE rb_cipher_finish( VALUE self )
 
 void rb_cipher_free( rb_cipher_t *rb_cipher )
 {
-  printf("free-ing!\n");
+  if (rb_cipher->ctx)
+  {
+    cipher_free_ctx(rb_cipher->ctx);
+  }
+
+  xfree(rb_cipher);
 }
