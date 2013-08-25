@@ -48,13 +48,10 @@ VALUE rb_cipher_allocate( VALUE klass )
 VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 {
   cipher_context_t *ctx;
-  int ret;
 
   Data_Get_Struct( self, cipher_context_t, ctx );
 
-  ret = cipher_init_ctx(ctx, cipher_info_from_string(StringValueCStr(cipher_type)));
-
-  printf("%d", ret);
+  cipher_init_ctx(ctx, cipher_info_from_string(StringValueCStr(cipher_type)));
 
   return self;
 }
