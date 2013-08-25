@@ -31,6 +31,8 @@ VALUE rb_cipher_update();
 VALUE rb_cipher_finish();
 void rb_cipher_free();
 
+VALUE e_UnsupportedCipher;
+
 struct rb_cipher
 {
   cipher_context_t *ctx;
@@ -48,6 +50,8 @@ void Init_cipher()
   rb_define_const( cCipher, "OPERATION_ENCRYPT", INT2NUM(POLARSSL_ENCRYPT) );
   rb_define_const( cCipher, "OPERATION_DECRYPT", INT2NUM(POLARSSL_DECRYPT) );
   rb_define_const( cCipher, "OPERATION_NONE", INT2NUM(POLARSSL_OPERATION_NONE) );
+
+  e_UnsupportedCipher = rb_define_class_under( cCipher, "UnsupportedCipher", rb_eStandardError);
 
   rb_define_alloc_func( cCipher, rb_cipher_allocate );
   rb_define_method( cCipher, "initialize", rb_cipher_initialize, 1 );
@@ -71,11 +75,17 @@ VALUE rb_cipher_allocate( VALUE klass )
 VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 {
   rb_cipher_t *rb_cipher;
+  char *cipher_type_str;
   const cipher_info_t *cipher_info;
+
+  cipher_type_str = StringValueCStr( cipher_type );
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  cipher_info = cipher_info_from_string( StringValueCStr( cipher_type ) );
+  cipher_info = cipher_info_from_string( cipher_type_str );
+
+  if (cipher_info == NULL)
+    rb_raise(e_UnsupportedCipher, "%s is not a supported cipher", cipher_type_str );
 
   cipher_init_ctx( rb_cipher->ctx, cipher_info );
 
