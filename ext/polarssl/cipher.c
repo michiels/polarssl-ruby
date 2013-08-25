@@ -27,6 +27,7 @@
 VALUE rb_cipher_allocate();
 VALUE rb_cipher_initialize();
 VALUE rb_cipher_setkey();
+VALUE rb_cipher_update();
 
 void Init_cipher()
 {
@@ -39,6 +40,7 @@ void Init_cipher()
   rb_define_alloc_func( cCipher, rb_cipher_allocate );
   rb_define_method( cCipher, "initialize", rb_cipher_initialize, 1 );
   rb_define_method( cCipher, "setkey", rb_cipher_setkey, 3 );
+  rb_define_method( cCipher, "update", rb_cipher_update, 1 );
 }
 
 VALUE rb_cipher_allocate( VALUE klass )
@@ -57,7 +59,7 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 
   Data_Get_Struct( self, cipher_context_t, ctx );
 
-  cipher_init_ctx(ctx, cipher_info_from_string(StringValueCStr(cipher_type)));
+  cipher_init_ctx( ctx, cipher_info_from_string( StringValueCStr( cipher_type ) ) );
 
   return self;
 }
@@ -68,7 +70,23 @@ VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation
 
   Data_Get_Struct( self, cipher_context_t, ctx );
 
-  cipher_setkey( ctx, (unsigned char *) StringValueCStr(key), FIX2INT(key_length), NUM2INT(operation) );
+  cipher_setkey( ctx, (unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
 
   return Qtrue;
+}
+
+VALUE rb_cipher_update( VALUE self, VALUE rb_input)
+{
+  cipher_context_t *ctx;
+  char *input;
+  char output[1024];
+  size_t olen;
+
+  Data_Get_Struct( self, cipher_context_t, ctx );
+
+  input = StringValueCStr( rb_input );
+
+  cipher_update( ctx, input, strlen(input), output, &olen);
+
+  return rb_str_new2( output );
 }
