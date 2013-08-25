@@ -57,7 +57,13 @@ VALUE rb_cipher_allocate( VALUE klass )
   rb_cipher_t *rb_cipher;
 
   rb_cipher = ALLOC( rb_cipher_t );
+  rb_cipher->olen = ALLOC( size_t );
+
+  memset(rb_cipher->output, 0, sizeof(rb_cipher->output) );
+  memset(rb_cipher->olen, 0, sizeof(size_t) );
+
   rb_cipher->ctx = ALLOC( cipher_context_t );
+
   cipher_init_ctx(rb_cipher->ctx, cipher_info_from_type(POLARSSL_CIPHER_NULL));
 
   return Data_Wrap_Struct( klass, 0, -1, rb_cipher);
@@ -89,14 +95,12 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input)
 {
   rb_cipher_t *rb_cipher;
   char *input;
-  char output[1024];
-  size_t olen;
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
   input = StringValueCStr( rb_input );
 
-  cipher_update( rb_cipher->ctx, input, strlen(input), output, &olen);
+  cipher_update( rb_cipher->ctx, input, strlen(input), rb_cipher->output, rb_cipher->olen);
 
-  return rb_str_new2( output );
+  return rb_str_new2( rb_cipher->output );
 }
