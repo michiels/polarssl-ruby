@@ -29,6 +29,7 @@ VALUE rb_cipher_initialize();
 VALUE rb_cipher_setkey();
 VALUE rb_cipher_update();
 VALUE rb_cipher_finish();
+void rb_cipher_free();
 
 struct rb_cipher
 {
@@ -64,7 +65,7 @@ VALUE rb_cipher_allocate( VALUE klass )
   rb_cipher->input_length = 0;
   rb_cipher->ctx = ALLOC( cipher_context_t );
 
-  return Data_Wrap_Struct( klass, 0, -1, rb_cipher);
+  return Data_Wrap_Struct( klass, 0, rb_cipher_free, rb_cipher);
 }
 
 VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
@@ -113,4 +114,9 @@ VALUE rb_cipher_finish( VALUE self )
   cipher_finish( rb_cipher->ctx, rb_cipher->output, &rb_cipher->olen );
 
   return rb_str_new( (const char *) rb_cipher->output, rb_cipher->input_length );
+}
+
+void rb_cipher_free( rb_cipher_t *rb_cipher )
+{
+  printf("free-ing!\n");
 }
