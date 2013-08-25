@@ -97,7 +97,7 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input)
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
   input = StringValueCStr( rb_input );
-  rb_cipher->input_length = strlen(input);
+  rb_cipher->input_length += strlen(input);
 
   cipher_update( rb_cipher->ctx, input, strlen(input), rb_cipher->output, &rb_cipher->olen);
 
