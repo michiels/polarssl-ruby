@@ -35,4 +35,13 @@ EOF
     end
   end
 
+  def test_wrong_key_data
+
+    assert_raises PolarSSL::Cipher::Error do
+      cipher = PolarSSL::Cipher.new("AES-128-CTR")
+      cipher.setkey("1234567890123456", 127, PolarSSL::Cipher::OPERATION_ENCRYPT)
+    end
+
+  end
+
 end
