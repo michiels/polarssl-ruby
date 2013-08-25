@@ -29,6 +29,15 @@ VALUE rb_cipher_initialize();
 VALUE rb_cipher_setkey();
 VALUE rb_cipher_update();
 
+struct rb_cipher
+{
+  cipher_context_t *ctx;
+  char output[1024];
+  size_t *olen;
+};
+
+typedef struct rb_cipher rb_cipher_t;
+
 void Init_cipher()
 {
   VALUE cCipher = rb_define_class_under( rb_mPolarSSL, "Cipher", rb_cObject);
@@ -45,48 +54,49 @@ void Init_cipher()
 
 VALUE rb_cipher_allocate( VALUE klass )
 {
-  cipher_context_t *ctx;
+  rb_cipher_t *rb_cipher;
 
-  ctx = ALLOC( cipher_context_t );
-  cipher_init_ctx(ctx, cipher_info_from_type(POLARSSL_CIPHER_NULL));
+  rb_cipher = ALLOC( rb_cipher_t );
+  rb_cipher->ctx = ALLOC( cipher_context_t );
+  cipher_init_ctx(rb_cipher->ctx, cipher_info_from_type(POLARSSL_CIPHER_NULL));
 
-  return Data_Wrap_Struct( klass, 0, cipher_free_ctx, ctx);
+  return Data_Wrap_Struct( klass, 0, -1, rb_cipher);
 }
 
 VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 {
-  cipher_context_t *ctx;
+  rb_cipher_t *rb_cipher;
 
-  Data_Get_Struct( self, cipher_context_t, ctx );
+  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  cipher_init_ctx( ctx, cipher_info_from_string( StringValueCStr( cipher_type ) ) );
+  cipher_init_ctx( rb_cipher->ctx, cipher_info_from_string( StringValueCStr( cipher_type ) ) );
 
   return self;
 }
 
 VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation )
 {
-  cipher_context_t *ctx;
+  rb_cipher_t *rb_cipher;
 
-  Data_Get_Struct( self, cipher_context_t, ctx );
+  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  cipher_setkey( ctx, (unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
+  cipher_setkey( rb_cipher->ctx, (unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
 
   return Qtrue;
 }
 
 VALUE rb_cipher_update( VALUE self, VALUE rb_input)
 {
-  cipher_context_t *ctx;
+  rb_cipher_t *rb_cipher;
   char *input;
   char output[1024];
   size_t olen;
 
-  Data_Get_Struct( self, cipher_context_t, ctx );
+  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
   input = StringValueCStr( rb_input );
 
-  cipher_update( ctx, input, strlen(input), output, &olen);
+  cipher_update( rb_cipher->ctx, input, strlen(input), output, &olen);
 
   return rb_str_new2( output );
 }
