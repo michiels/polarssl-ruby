@@ -32,6 +32,7 @@ VALUE rb_cipher_finish();
 void rb_cipher_free();
 
 VALUE e_UnsupportedCipher;
+VALUE e_CipherError;
 
 struct rb_cipher
 {
@@ -51,7 +52,8 @@ void Init_cipher()
   rb_define_const( cCipher, "OPERATION_DECRYPT", INT2NUM(POLARSSL_DECRYPT) );
   rb_define_const( cCipher, "OPERATION_NONE", INT2NUM(POLARSSL_OPERATION_NONE) );
 
-  e_UnsupportedCipher = rb_define_class_under( cCipher, "UnsupportedCipher", rb_eStandardError);
+  e_UnsupportedCipher = rb_define_class_under( cCipher, "UnsupportedCipher", rb_eStandardError );
+  e_CipherError = rb_define_class_under( cCipher, "Error", rb_eStandardError) ;
 
   rb_define_alloc_func( cCipher, rb_cipher_allocate );
   rb_define_method( cCipher, "initialize", rb_cipher_initialize, 1 );
@@ -97,10 +99,14 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation )
 {
   rb_cipher_t *rb_cipher;
+  int ret;
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  cipher_setkey( rb_cipher->ctx, (const unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
+  ret = cipher_setkey( rb_cipher->ctx, (const unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
+
+  if (ret < 0)
+    rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret);
 
   return Qtrue;
 }
@@ -109,13 +115,17 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input)
 {
   rb_cipher_t *rb_cipher;
   char *input;
+  int ret;
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
   input = StringValueCStr( rb_input );
   rb_cipher->input_length += strlen(input);
 
-  cipher_update( rb_cipher->ctx, (const unsigned char *) input, strlen(input), rb_cipher->output, &rb_cipher->olen);
+  ret = cipher_update( rb_cipher->ctx, (const unsigned char *) input, strlen(input), rb_cipher->output, &rb_cipher->olen);
+
+  if (ret < 0)
+    rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret);
 
   return Qtrue;
 }
@@ -123,10 +133,14 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input)
 VALUE rb_cipher_finish( VALUE self )
 {
   rb_cipher_t *rb_cipher;
+  int ret;
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  cipher_finish( rb_cipher->ctx, rb_cipher->output, &rb_cipher->olen );
+  ret = cipher_finish( rb_cipher->ctx, rb_cipher->output, &rb_cipher->olen );
+
+  if (ret < 0)
+    rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret);
 
   return rb_str_new( (const char *) rb_cipher->output, rb_cipher->input_length );
 }
