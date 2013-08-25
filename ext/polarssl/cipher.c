@@ -23,6 +23,7 @@
 
  #include "polarssl.h"
  #include "polarssl/cipher.h"
+ #include "ruby.h"
 
 VALUE rb_cipher_allocate();
 VALUE rb_cipher_initialize();
@@ -46,7 +47,10 @@ typedef struct rb_cipher rb_cipher_t;
 
 void Init_cipher()
 {
-  VALUE cCipher = rb_define_class_under( rb_mPolarSSL, "Cipher", rb_cObject);
+  /* Document-class: PolarSSL::Cipher
+   * This class lets you encrypt and decrypt data.
+   */
+  VALUE cCipher = rb_define_class_under( rb_mPolarSSL, "Cipher", rb_path2class("Object") );
 
   rb_define_const( cCipher, "OPERATION_ENCRYPT", INT2NUM(POLARSSL_ENCRYPT) );
   rb_define_const( cCipher, "OPERATION_DECRYPT", INT2NUM(POLARSSL_DECRYPT) );
@@ -76,11 +80,23 @@ VALUE rb_cipher_allocate( VALUE klass )
   return Data_Wrap_Struct( klass, 0, rb_cipher_free, rb_cipher);
 }
 
+/*
+ *  call-seq:
+ *      initialize( cipher_type )
+ *
+ *  Creates a new cipher object to be encrypted with the given cipher_type.
+ *
+ *  See: https://github.com/polarssl/polarssl/blob/master/library/cipher.c#L210
+ *  for all possible ciphers.
+ *
+ */
+
 VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 {
   rb_cipher_t *rb_cipher;
   char *cipher_type_str;
   const cipher_info_t *cipher_info;
+  int ret;
 
   cipher_type_str = StringValueCStr( cipher_type );
 
@@ -89,9 +105,14 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
   cipher_info = cipher_info_from_string( cipher_type_str );
 
   if (cipher_info == NULL)
+  {
     rb_raise(e_UnsupportedCipher, "%s is not a supported cipher", cipher_type_str );
-  else
-    cipher_init_ctx( rb_cipher->ctx, cipher_info );
+  }
+  else {
+    ret = cipher_init_ctx( rb_cipher->ctx, cipher_info );
+    if ( ret < 0 )
+      rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
+  }
 
   return self;
 }
