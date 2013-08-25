@@ -28,12 +28,14 @@ VALUE rb_cipher_allocate();
 VALUE rb_cipher_initialize();
 VALUE rb_cipher_setkey();
 VALUE rb_cipher_update();
+VALUE rb_cipher_finish();
 
 struct rb_cipher
 {
   cipher_context_t *ctx;
   char output[1024];
-  size_t *olen;
+  size_t olen;
+  size_t input_length;
 };
 
 typedef struct rb_cipher rb_cipher_t;
@@ -50,6 +52,7 @@ void Init_cipher()
   rb_define_method( cCipher, "initialize", rb_cipher_initialize, 1 );
   rb_define_method( cCipher, "setkey", rb_cipher_setkey, 3 );
   rb_define_method( cCipher, "update", rb_cipher_update, 1 );
+  rb_define_method( cCipher, "finish", rb_cipher_finish, 0 );
 }
 
 VALUE rb_cipher_allocate( VALUE klass )
@@ -57,14 +60,9 @@ VALUE rb_cipher_allocate( VALUE klass )
   rb_cipher_t *rb_cipher;
 
   rb_cipher = ALLOC( rb_cipher_t );
-  rb_cipher->olen = ALLOC( size_t );
-
-  memset(rb_cipher->output, 0, sizeof(rb_cipher->output) );
-  memset(rb_cipher->olen, 0, sizeof(size_t) );
-
+  rb_cipher->olen = 0;
+  rb_cipher->input_length = 0;
   rb_cipher->ctx = ALLOC( cipher_context_t );
-
-  cipher_init_ctx(rb_cipher->ctx, cipher_info_from_type(POLARSSL_CIPHER_NULL));
 
   return Data_Wrap_Struct( klass, 0, -1, rb_cipher);
 }
@@ -86,7 +84,7 @@ VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  cipher_setkey( rb_cipher->ctx, (unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
+  cipher_setkey( rb_cipher->ctx, StringValuePtr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
 
   return Qtrue;
 }
@@ -99,8 +97,24 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input)
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
   input = StringValueCStr( rb_input );
+  rb_cipher->input_length = strlen(input);
 
-  cipher_update( rb_cipher->ctx, input, strlen(input), rb_cipher->output, rb_cipher->olen);
+  cipher_update( rb_cipher->ctx, input, strlen(input), rb_cipher->output, &rb_cipher->olen);
 
-  return rb_str_new2( rb_cipher->output );
+  return Qtrue;
+}
+
+VALUE rb_cipher_finish( VALUE self )
+{
+  rb_cipher_t *rb_cipher;
+
+  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+
+  printf("before finish\n");
+  printf("olen: %zu\n", rb_cipher->olen);
+  printf("strlen: %zu\n", strlen( rb_cipher->output ) );
+
+  cipher_finish( rb_cipher->ctx, rb_cipher->output, &rb_cipher->olen );
+
+  return rb_str_new( rb_cipher->output, rb_cipher->input_length );
 }
