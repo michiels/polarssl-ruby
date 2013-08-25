@@ -29,4 +29,10 @@ EOF
   assert_equal should_encrypt_as, encrypted_base64
   end
 
+  def test_unsupported_cipher
+    assert_raises PolarSSL::Cipher::UnsupportedCipher do
+      PolarSSL::Cipher.new("meh")
+    end
+  end
+
 end

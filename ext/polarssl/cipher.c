@@ -69,6 +69,8 @@ VALUE rb_cipher_allocate( VALUE klass )
   rb_cipher->input_length = 0;
   rb_cipher->ctx = ALLOC( cipher_context_t );
 
+  memset(rb_cipher->ctx, 0, sizeof( cipher_context_t ) );
+
   return Data_Wrap_Struct( klass, 0, rb_cipher_free, rb_cipher);
 }
 
@@ -86,8 +88,8 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 
   if (cipher_info == NULL)
     rb_raise(e_UnsupportedCipher, "%s is not a supported cipher", cipher_type_str );
-
-  cipher_init_ctx( rb_cipher->ctx, cipher_info );
+  else
+    cipher_init_ctx( rb_cipher->ctx, cipher_info );
 
   return self;
 }
@@ -131,10 +133,9 @@ VALUE rb_cipher_finish( VALUE self )
 
 void rb_cipher_free( rb_cipher_t *rb_cipher )
 {
+
   if (rb_cipher->ctx)
-  {
     cipher_free_ctx(rb_cipher->ctx);
-  }
 
   xfree(rb_cipher);
 }
