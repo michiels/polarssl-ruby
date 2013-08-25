@@ -84,7 +84,7 @@ VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  cipher_setkey( rb_cipher->ctx, StringValuePtr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
+  cipher_setkey( rb_cipher->ctx, (const unsigned char *) StringValuePtr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
 
   return Qtrue;
 }
@@ -99,7 +99,7 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input)
   input = StringValueCStr( rb_input );
   rb_cipher->input_length += strlen(input);
 
-  cipher_update( rb_cipher->ctx, input, strlen(input), rb_cipher->output, &rb_cipher->olen);
+  cipher_update( rb_cipher->ctx, (const unsigned char *) input, strlen(input), (unsigned char *) rb_cipher->output, &rb_cipher->olen);
 
   return Qtrue;
 }
@@ -114,7 +114,7 @@ VALUE rb_cipher_finish( VALUE self )
   printf("olen: %zu\n", rb_cipher->olen);
   printf("strlen: %zu\n", strlen( rb_cipher->output ) );
 
-  cipher_finish( rb_cipher->ctx, rb_cipher->output, &rb_cipher->olen );
+  cipher_finish( rb_cipher->ctx, (unsigned char *) rb_cipher->output, &rb_cipher->olen );
 
   return rb_str_new( rb_cipher->output, rb_cipher->input_length );
 }
