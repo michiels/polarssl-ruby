@@ -85,7 +85,7 @@ VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  cipher_setkey( rb_cipher->ctx, (const unsigned char *) StringValuePtr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
+  cipher_setkey( rb_cipher->ctx, (const unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
 
   return Qtrue;
 }
