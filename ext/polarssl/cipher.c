@@ -71,10 +71,13 @@ VALUE rb_cipher_allocate( VALUE klass )
 VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 {
   rb_cipher_t *rb_cipher;
+  const cipher_info_t *cipher_info;
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  cipher_init_ctx( rb_cipher->ctx, cipher_info_from_string( StringValueCStr( cipher_type ) ) );
+  cipher_info = cipher_info_from_string( StringValueCStr( cipher_type ) );
+
+  cipher_init_ctx( rb_cipher->ctx, cipher_info );
 
   return self;
 }
