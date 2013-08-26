@@ -142,7 +142,7 @@ VALUE rb_cipher_allocate( VALUE klass )
 }
 
 /*
- *  call-seq: new( cipher_type )
+ *  call-seq: new(cipher_type)
  *
  *  Initializes a new Cipher object to encrypt data with. For supported cipher types,
  *  see: https://github.com/michiels/polarssl-ruby/wiki/Using-PolarSSL::Cipher
@@ -174,6 +174,19 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
   return self;
 }
 
+
+/*
+ *  call-seq: setkey(key, key_length, operation)
+ *
+ *  Sets the key to be used for encrypting/decrypting this cipher. The key, key_length and operation
+ *  depend on which cipher you are using. For example, when using AES-128-CTR you would use something like:
+ *
+ *    cipher = PolarSSL::Cipher.new('AES-128-CTR')
+ *    cipher.setkey('mykey', 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
+ *
+ *  for both encryping and decrypting your cipher.
+ *
+ */
 VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation )
 {
   rb_cipher_t *rb_cipher;
@@ -189,6 +202,12 @@ VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation
   return Qtrue;
 }
 
+/*
+ *  call-seq: update(input)
+ *
+ *  Adds input to your cipher.
+ *
+ */
 VALUE rb_cipher_update( VALUE self, VALUE rb_input)
 {
   rb_cipher_t *rb_cipher;
@@ -208,6 +227,12 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input)
   return Qtrue;
 }
 
+/*
+ *  call-seq: finish()
+ *
+ *  Finishes encrypting the data added by one or multiple update() calls and returns the encrypted data.
+ *
+ */
 VALUE rb_cipher_finish( VALUE self )
 {
   rb_cipher_t *rb_cipher;
