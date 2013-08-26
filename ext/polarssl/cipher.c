@@ -35,29 +35,89 @@ void  rb_cipher_free();
 VALUE e_UnsupportedCipher;
 VALUE e_CipherError;
 
-struct rb_cipher
+typedef struct
 {
   cipher_context_t *ctx;
   unsigned char output[1024];
   size_t olen;
   size_t input_length;
-};
-
-typedef struct rb_cipher rb_cipher_t;
+} rb_cipher_t;
 
 void Init_cipher(void)
 {
-    /* Document-class: PolarSSL::Cipher
-     *
-     * This class lets you encrypt and decrypt data.
-     */
+    /** Document-class: PolarSSL::Cipher
+      *
+      * This class lets you encrypt and decrypt data.
+      *
+      * == Example
+      *
+      *   require 'polarssl'
+      *   require 'base64'
+      *
+      *   cipher = PolarSSL::Cipher.new("AES-128-CTR")
+      *   cipher.setkey("mykey", 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
+      *   cipher.update("secret stuff I want encrypted")
+      *   encrypted_data = cipher.finish()
+      *
+      *   encoded_encrypted_data = Base64.encode64(encrypted_data)
+      *   puts encoded_encrypted_data
+      *
+      * == Supported Cipher types:
+      *
+      *   CAMELLIA-128-CBC
+      *   CAMELLIA-192-CBC
+      *   CAMELLIA-256-CBC
+      *
+      *   CAMELLIA-128-CFB128
+      *   CAMELLIA-192-CFB128
+      *   CAMELLIA-256-CFB128
+      *
+      *   CAMELLIA-128-CTR
+      *   CAMELLIA-192-CTR
+      *   CAMELLIA-256-CTR
+      *
+      *   AES-128-CBC
+      *   AES-192-CBC
+      *   AES-256-CBC
+      *
+      *   AES-128-CFB128
+      *   AES-192-CFB128
+      *   AES-256-CFB128
+      *
+      *   AES-128-CTR
+      *   AES-192-CTR
+      *   AES-256-CTR
+      *
+      *   DES-CBC
+      *   DES-EDE-CBC
+      *   DES-EDE3-CBC
+      *
+      *   BLOWFISH-CBC
+      *   BLOWFISH-CFB64
+      *   BLOWFISH-CTR
+      *
+      *   NULL
+      *
+      */
     VALUE cCipher = rb_define_class_under( rb_mPolarSSL, "Cipher", rb_path2class("Object") );
 
+    /* 1: Use cipher for encryption */
     rb_define_const( cCipher, "OPERATION_ENCRYPT", INT2NUM(POLARSSL_ENCRYPT) );
+
+    /* 0: Use cipher for decryption */
     rb_define_const( cCipher, "OPERATION_DECRYPT", INT2NUM(POLARSSL_DECRYPT) );
+
+    /* -1: Don't use cipher for anything */
     rb_define_const( cCipher, "OPERATION_NONE", INT2NUM(POLARSSL_OPERATION_NONE) );
 
+    /* Document-class: PolarSSL::Cipher::UnsupportedCipher
+     * Raised when you do not pass a supported cipher type to PolarSSL::Cipher.new()
+     */
     e_UnsupportedCipher = rb_define_class_under( cCipher, "UnsupportedCipher", rb_eStandardError );
+
+    /* Document-class: PolarSSL::Cipher::Error
+     * Raised when the PolarSSL library throws a certain Cipher error code
+     */
     e_CipherError = rb_define_class_under( cCipher, "Error", rb_eStandardError) ;
 
     rb_define_alloc_func( cCipher, rb_cipher_allocate );
@@ -84,7 +144,8 @@ VALUE rb_cipher_allocate( VALUE klass )
 /*
  *  call-seq: new( cipher_type )
  *
- *  Initializes a new Cipher object to encrypt data with.
+ *  Initializes a new Cipher object to encrypt data with. For supported cipher types,
+ *  see: https://github.com/michiels/polarssl-ruby/wiki/Using-PolarSSL::Cipher
  *
  */
 VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
