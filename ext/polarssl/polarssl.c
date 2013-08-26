@@ -27,10 +27,12 @@
 #include "ssl.h"
 #include "cipher.h"
 
+VALUE rb_mPolarSSL;
+
 void Init_polarssl()
 {
   /* The PolarSSL module */
-  VALUE rb_mPolarSSL = rb_define_module( "PolarSSL" );
+  rb_mPolarSSL = rb_define_module( "PolarSSL" );
 
   Init_entropy( );
   Init_ctr_drbg( );
