@@ -21,7 +21,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "polarssl.h"
 #include "polarssl/ssl.h"
 #include "polarssl/ctr_drbg.h"

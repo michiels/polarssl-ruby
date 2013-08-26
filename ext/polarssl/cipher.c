@@ -21,16 +21,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- #include "polarssl.h"
- #include "polarssl/cipher.h"
- #include "ruby.h"
+#include "polarssl.h"
+#include "polarssl/cipher.h"
+#include "ruby.h"
 
 VALUE rb_cipher_allocate();
 VALUE rb_cipher_initialize();
 VALUE rb_cipher_setkey();
 VALUE rb_cipher_update();
 VALUE rb_cipher_finish();
-void rb_cipher_free();
+void  rb_cipher_free();
 
 VALUE e_UnsupportedCipher;
 VALUE e_CipherError;
@@ -45,25 +45,26 @@ struct rb_cipher
 
 typedef struct rb_cipher rb_cipher_t;
 
-void Init_cipher()
+void Init_cipher(void)
 {
-  /* Document-class: PolarSSL::Cipher
-   * This class lets you encrypt and decrypt data.
-   */
-  VALUE cCipher = rb_define_class_under( rb_mPolarSSL, "Cipher", rb_path2class("Object") );
+    /* Document-class: PolarSSL::Cipher
+     *
+     * This class lets you encrypt and decrypt data.
+     */
+    VALUE cCipher = rb_define_class_under( rb_mPolarSSL, "Cipher", rb_path2class("Object") );
 
-  rb_define_const( cCipher, "OPERATION_ENCRYPT", INT2NUM(POLARSSL_ENCRYPT) );
-  rb_define_const( cCipher, "OPERATION_DECRYPT", INT2NUM(POLARSSL_DECRYPT) );
-  rb_define_const( cCipher, "OPERATION_NONE", INT2NUM(POLARSSL_OPERATION_NONE) );
+    rb_define_const( cCipher, "OPERATION_ENCRYPT", INT2NUM(POLARSSL_ENCRYPT) );
+    rb_define_const( cCipher, "OPERATION_DECRYPT", INT2NUM(POLARSSL_DECRYPT) );
+    rb_define_const( cCipher, "OPERATION_NONE", INT2NUM(POLARSSL_OPERATION_NONE) );
 
-  e_UnsupportedCipher = rb_define_class_under( cCipher, "UnsupportedCipher", rb_eStandardError );
-  e_CipherError = rb_define_class_under( cCipher, "Error", rb_eStandardError) ;
+    e_UnsupportedCipher = rb_define_class_under( cCipher, "UnsupportedCipher", rb_eStandardError );
+    e_CipherError = rb_define_class_under( cCipher, "Error", rb_eStandardError) ;
 
-  rb_define_alloc_func( cCipher, rb_cipher_allocate );
-  rb_define_method( cCipher, "initialize", rb_cipher_initialize, 1 );
-  rb_define_method( cCipher, "setkey", rb_cipher_setkey, 3 );
-  rb_define_method( cCipher, "update", rb_cipher_update, 1 );
-  rb_define_method( cCipher, "finish", rb_cipher_finish, 0 );
+    rb_define_alloc_func( cCipher, rb_cipher_allocate );
+    rb_define_method( cCipher, "initialize", rb_cipher_initialize, 1 );
+    rb_define_method( cCipher, "setkey", rb_cipher_setkey, 3 );
+    rb_define_method( cCipher, "update", rb_cipher_update, 1 );
+    rb_define_method( cCipher, "finish", rb_cipher_finish, 0 );
 }
 
 VALUE rb_cipher_allocate( VALUE klass )
@@ -77,20 +78,15 @@ VALUE rb_cipher_allocate( VALUE klass )
 
   memset(rb_cipher->ctx, 0, sizeof( cipher_context_t ) );
 
-  return Data_Wrap_Struct( klass, 0, rb_cipher_free, rb_cipher);
+  return Data_Wrap_Struct( klass, 0, rb_cipher_free, rb_cipher );
 }
 
 /*
- *  call-seq:
- *      initialize( cipher_type )
+ *  call-seq: new( cipher_type )
  *
- *  Creates a new cipher object to be encrypted with the given cipher_type.
- *
- *  See: https://github.com/polarssl/polarssl/blob/master/library/cipher.c#L210
- *  for all possible ciphers.
+ *  Initializes a new Cipher object to encrypt data with.
  *
  */
-
 VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 {
   rb_cipher_t *rb_cipher;

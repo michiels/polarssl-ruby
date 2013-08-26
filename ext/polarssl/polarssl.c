@@ -21,18 +21,16 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 #include "ruby.h"
 #include "entropy.h"
 #include "ctr_drbg.h"
 #include "ssl.h"
 #include "cipher.h"
 
-VALUE rb_mPolarSSL;
-
 void Init_polarssl()
 {
-  rb_mPolarSSL = rb_define_module( "PolarSSL" );
+  /* The PolarSSL module */
+  VALUE rb_mPolarSSL = rb_define_module( "PolarSSL" );
 
   Init_entropy( );
   Init_ctr_drbg( );

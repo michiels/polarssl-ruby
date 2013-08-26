@@ -18,7 +18,7 @@ end
 
 task test: :compile
 
-RDOC_FILES = FileList["RDOC_MAIN.rdoc", "ext/**/*.c", "lib/**/*.rb"]
+RDOC_FILES = FileList["RDOC_MAIN.rdoc", "lib/**/*.rb", "ext/polarssl/polarssl.c", "ext/polarssl/*.c"]
 
 RDoc::Task.new do |rd|
   rd.rdoc_dir = "doc"
