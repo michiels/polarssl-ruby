@@ -208,7 +208,7 @@ VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation
   ret = cipher_setkey( rb_cipher->ctx, (const unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
 
   if (ret < 0)
-    rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret);
+    rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
 
   return Qtrue;
 }
@@ -219,7 +219,7 @@ VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation
  *  Adds input to your cipher.
  *
  */
-VALUE rb_cipher_update( VALUE self, VALUE rb_input)
+VALUE rb_cipher_update( VALUE self, VALUE rb_input )
 {
   rb_cipher_t *rb_cipher;
   char *input;
@@ -234,10 +234,10 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input)
   /* Increases the output buffer so it results into the total input length so far. */
   REALLOC_N(rb_cipher->output, unsigned char, rb_cipher->input_length);
 
-  ret = cipher_update( rb_cipher->ctx, (const unsigned char *) input, strlen(input), rb_cipher->output, &rb_cipher->olen);
+  ret = cipher_update( rb_cipher->ctx, (const unsigned char *) input, strlen(input), rb_cipher->output, &rb_cipher->olen );
 
   if (ret < 0)
-    rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret);
+    rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
 
   return Qtrue;
 }
@@ -258,7 +258,7 @@ VALUE rb_cipher_finish( VALUE self )
   ret = cipher_finish( rb_cipher->ctx, rb_cipher->output, &rb_cipher->olen );
 
   if (ret < 0)
-    rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret);
+    rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
 
   return rb_str_new( (const char *) rb_cipher->output, rb_cipher->input_length );
 }
@@ -266,8 +266,8 @@ VALUE rb_cipher_finish( VALUE self )
 void rb_cipher_free( rb_cipher_t *rb_cipher )
 {
 
-  if (rb_cipher->ctx)
-    cipher_free_ctx(rb_cipher->ctx);
+  if ( rb_cipher->ctx )
+    cipher_free_ctx(rb_cipher->ctx );
 
-  xfree(rb_cipher);
+  xfree( rb_cipher );
 }
