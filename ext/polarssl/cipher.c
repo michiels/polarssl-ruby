@@ -38,7 +38,7 @@ VALUE e_CipherError;
 typedef struct
 {
   cipher_context_t *ctx;
-  unsigned char output[1024];
+  unsigned char *output;
   size_t olen;
   size_t input_length;
 } rb_cipher_t;
@@ -141,11 +141,13 @@ VALUE rb_cipher_allocate( VALUE klass )
   rb_cipher_t *rb_cipher;
 
   rb_cipher = ALLOC( rb_cipher_t );
+  memset( rb_cipher, 0, sizeof( rb_cipher_t) );
+
   rb_cipher->olen = 0;
   rb_cipher->input_length = 0;
-  rb_cipher->ctx = ALLOC( cipher_context_t );
 
-  memset(rb_cipher->ctx, 0, sizeof( cipher_context_t ) );
+  rb_cipher->ctx = ALLOC( cipher_context_t );
+  memset( rb_cipher->ctx, 0, sizeof( cipher_context_t ) );
 
   return Data_Wrap_Struct( klass, 0, rb_cipher_free, rb_cipher );
 }
@@ -226,7 +228,11 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input)
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
   input = StringValueCStr( rb_input );
+
   rb_cipher->input_length += strlen(input);
+
+  /* Increases the output buffer so it results into the total input length so far. */
+  REALLOC_N(rb_cipher->output, unsigned char, rb_cipher->input_length);
 
   ret = cipher_update( rb_cipher->ctx, (const unsigned char *) input, strlen(input), rb_cipher->output, &rb_cipher->olen);
 
