@@ -62,6 +62,15 @@ void Init_cipher(void)
       *   encoded_encrypted_data = Base64.encode64(encrypted_data)
       *   puts encoded_encrypted_data
       *
+      * == When you get an exception
+      *
+      * When using the Cipher class, you might get an exception. Some
+      * exeptions return a PolarSSL error code, like PolarSSL::Cipher::Error.
+      *
+      * These error codes are directly passed on from the PolarSSL library
+      * and you can look up what they mean in the PolarSSL API documentation
+      * at: https://polarssl.org/api/.
+      *
       * == Supported Cipher types:
       *
       *   CAMELLIA-128-CBC
