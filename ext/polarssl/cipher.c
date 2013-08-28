@@ -227,14 +227,15 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input )
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  input = StringValueCStr( rb_input );
+  StringValue( rb_input );
+  input = StringValuePtr( rb_input );
 
-  rb_cipher->input_length += strlen(input);
+  rb_cipher->input_length += RSTRING_LEN( rb_input );
 
   /* Increases the output buffer so it results into the total input length so far. */
   REALLOC_N(rb_cipher->output, unsigned char, rb_cipher->input_length);
 
-  ret = cipher_update( rb_cipher->ctx, (const unsigned char *) input, strlen(input), rb_cipher->output, &rb_cipher->olen );
+  ret = cipher_update( rb_cipher->ctx, (const unsigned char *) input, RSTRING_LEN( rb_input ), rb_cipher->output, &rb_cipher->olen );
 
   if (ret < 0)
     rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
