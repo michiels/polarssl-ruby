@@ -39,7 +39,7 @@ class CipherTest < MiniTest::Unit::TestCase
 
   end
 
-  def test_wrong_key_data
+  def test_unsupported_key
 
     assert_raises PolarSSL::Cipher::Error do
       cipher = PolarSSL::Cipher.new("AES-128-CTR")
@@ -56,8 +56,6 @@ class CipherTest < MiniTest::Unit::TestCase
   
   def bin_to_hex(data)
     data.each_byte.map { |b| b.to_s(16).join }
-  end
-    
   end
 
 end
