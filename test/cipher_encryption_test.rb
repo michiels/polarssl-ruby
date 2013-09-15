@@ -10,7 +10,7 @@ class CipherTest < MiniTest::Unit::TestCase
     key = hex_to_bin("2b7e151628aed2a6abf7158809cf4f3c")
     iv = hex_to_bin("f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff")
     input = hex_to_bin("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e51")
-    should_encrypt_as hex_to_bin("874d6191b620e3261bef6864990db6ce9806f66b7970fdff8617187bb9fffdff")
+    should_encrypt_as = hex_to_bin("874d6191b620e3261bef6864990db6ce9806f66b7970fdff8617187bb9fffdff")
     
     cipher = PolarSSL::Cipher.new("AES-128-CTR")
     cipher.setkey(key, 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
