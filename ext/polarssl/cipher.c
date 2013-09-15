@@ -138,18 +138,18 @@ void Init_cipher(void)
 
 VALUE rb_cipher_allocate( VALUE klass )
 {
-  rb_cipher_t *rb_cipher;
+    rb_cipher_t *rb_cipher;
 
-  rb_cipher = ALLOC( rb_cipher_t );
-  memset( rb_cipher, 0, sizeof( rb_cipher_t) );
+    rb_cipher = ALLOC( rb_cipher_t );
+    memset( rb_cipher, 0, sizeof( rb_cipher_t) );
 
-  rb_cipher->olen = 0;
-  rb_cipher->input_length = 0;
+    rb_cipher->olen = 0;
+    rb_cipher->input_length = 0;
 
-  rb_cipher->ctx = ALLOC( cipher_context_t );
-  memset( rb_cipher->ctx, 0, sizeof( cipher_context_t ) );
+    rb_cipher->ctx = ALLOC( cipher_context_t );
+    memset( rb_cipher->ctx, 0, sizeof( cipher_context_t ) );
 
-  return Data_Wrap_Struct( klass, 0, rb_cipher_free, rb_cipher );
+    return Data_Wrap_Struct( klass, 0, rb_cipher_free, rb_cipher );
 }
 
 /*
@@ -161,28 +161,29 @@ VALUE rb_cipher_allocate( VALUE klass )
  */
 VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 {
-  rb_cipher_t *rb_cipher;
-  char *cipher_type_str;
-  const cipher_info_t *cipher_info;
-  int ret;
+    rb_cipher_t *rb_cipher;
+    char *cipher_type_str;
+    const cipher_info_t *cipher_info;
+    int ret;
 
-  cipher_type_str = StringValueCStr( cipher_type );
+    cipher_type_str = StringValueCStr( cipher_type );
 
-  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+    Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  cipher_info = cipher_info_from_string( cipher_type_str );
+    cipher_info = cipher_info_from_string( cipher_type_str );
 
-  if (cipher_info == NULL)
-  {
-    rb_raise(e_UnsupportedCipher, "%s is not a supported cipher", cipher_type_str );
-  }
-  else {
-    ret = cipher_init_ctx( rb_cipher->ctx, cipher_info );
-    if ( ret < 0 )
-      rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
-  }
+    if (cipher_info == NULL)
+    {
+        rb_raise(e_UnsupportedCipher, "%s is not a supported cipher", cipher_type_str );
+    }
+    else 
+    {
+        ret = cipher_init_ctx( rb_cipher->ctx, cipher_info );
+        if ( ret < 0 )
+            rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
+    }
 
-  return self;
+    return self;
 }
 
 
@@ -200,17 +201,17 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
  */
 VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation )
 {
-  rb_cipher_t *rb_cipher;
-  int ret;
+    rb_cipher_t *rb_cipher;
+    int ret;
 
-  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+    Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  ret = cipher_setkey( rb_cipher->ctx, (const unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
+    ret = cipher_setkey( rb_cipher->ctx, (const unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
 
-  if (ret < 0)
+    if (ret < 0)
     rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
 
-  return Qtrue;
+    return Qtrue;
 }
 
 /*
