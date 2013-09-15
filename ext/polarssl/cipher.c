@@ -141,9 +141,9 @@ void Init_cipher(void)
 VALUE rb_cipher_reset( VALUE self, VALUE initialization_vector )
 {
     rb_cipher_t *rb_cipher;
-    char *iv;
+    unsigned char *iv;
     
-    iv = StringValueCStr( initialization_vector );
+    iv = (unsigned char *) StringValueCStr( initialization_vector );
     
     Data_Get_Struct( self, rb_cipher_t, rb_cipher );
     
