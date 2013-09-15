@@ -12,9 +12,10 @@ class CipherTest < MiniTest::Unit::TestCase
     # TODO: use random generate iv
     # iv = SecureRandom.random_bytes(16)
     
+    cipher.setkey("1234567890123456", 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
+    
     cipher.reset(iv)
     
-    cipher.setkey("1234567890123456", 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
     cipher.update("Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Sed posuere consectetur est at lobortis. Curabitur blandit tempus porttitor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed posuere consectetur est at lobortis.")
 
     encrypted = cipher.finish
@@ -35,6 +36,7 @@ Cxn/UlDdNXk23dORm878TyvQ9839FBT80zflSyYjsHCj43HxC6KBg7lPNeEz
 +kw=
 EOF
     assert_equal should_encrypt_as, encrypted_base64
+    
   end
 
   def test_unsupported_cipher

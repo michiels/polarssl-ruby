@@ -30,6 +30,7 @@ VALUE rb_cipher_initialize();
 VALUE rb_cipher_setkey();
 VALUE rb_cipher_update();
 VALUE rb_cipher_finish();
+VALUE rb_cipher_reset();
 void  rb_cipher_free();
 
 VALUE e_UnsupportedCipher;
@@ -134,6 +135,21 @@ void Init_cipher(void)
     rb_define_method( cCipher, "setkey", rb_cipher_setkey, 3 );
     rb_define_method( cCipher, "update", rb_cipher_update, 1 );
     rb_define_method( cCipher, "finish", rb_cipher_finish, 0 );
+    rb_define_method( cCipher, "reset", rb_cipher_reset, 1 );
+}
+
+VALUE rb_cipher_reset( VALUE self, VALUE initialization_vector )
+{
+    rb_cipher_t *rb_cipher;
+    char *iv;
+    
+    iv = StringValueCStr( initialization_vector );
+    
+    Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+    
+    cipher_reset( rb_cipher->ctx, iv );
+    
+    return Qtrue;
 }
 
 VALUE rb_cipher_allocate( VALUE klass )
