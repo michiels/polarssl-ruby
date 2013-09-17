@@ -20,6 +20,21 @@ class CipherTest < MiniTest::Unit::TestCase
 
     assert_equal should_encrypt_as, encrypted    
   end
+  
+  def test_aes_128_ctr_decrypt
+    key = hex_to_bin("2b7e151628aed2a6abf7158809cf4f3c")
+    iv = hex_to_bin("f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff")
+    input = hex_to_bin("874d6191b620e3261bef6864990db6ce")
+    should_decrypt_as = hex_to_bin("6bc1bee22e409f96e93d7e117393172a")
+    
+    cipher = PolarSSL::Cipher.new("AES-128-CTR")
+    cipher.setkey(key, 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
+    cipher.reset(iv)
+    cipher.update(input)
+    decrypted = cipher.finish
+    
+    assert_equal should_decrypt_as, decrypted
+  end
 
   def test_unsupported_cipher
 
