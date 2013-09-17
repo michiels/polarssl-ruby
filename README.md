@@ -20,6 +20,8 @@ gem install polarssl
 
 ## Usage
 
+### Setting up a SSL connection
+
 This gem provides a pretty low level interface to the native PolarSSL C library.
 The core API aims to reflect the PolarSSL library as much as possible. See the
 [full API documentation](http://michiels.github.io/polarssl-ruby/doc/) for all classes and methods.
@@ -53,6 +55,25 @@ ssl.close_notify
 socket.close
 
 ssl.close
+```
+
+### Encrypting data
+
+The `PolarSSL::Cipher` class lets you encrypt data with a wide range of
+encryption standards like AES, Blowfish and DES.
+
+This sample encrypts a given plaintext with AES128 in CTR mode:
+
+```ruby
+require 'polarssl'
+require 'base64'
+
+cipher = PolarSSL::Cipher.new("AES-128-CTR")
+cipher.setkey("my16bytekey23456", 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
+cipher.update("some secret message I want to keep")
+encrypted_data = cipher.finish
+
+encoded_encrypted_data = Base64.encode64(encrypted_data)
 ```
 
 ## Contributing
