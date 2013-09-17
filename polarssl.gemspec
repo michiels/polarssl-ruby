@@ -6,7 +6,7 @@ require 'polarssl/version'
 Gem::Specification.new do |s|
   s.name = 'polarssl'
   s.version = PolarSSL::VERSION
-  s.date = '2013-08-20'
+  s.date = '2013-09-17'
   s.summary = 'Use the PolarSSL cryptographic and SSL library in Ruby.'
   s.description = 'A gem that lets you use the PolarSSL cryptography library with Ruby.'
   s.authors = ['Michiel Sikkes']
