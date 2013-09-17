@@ -28,6 +28,14 @@ class CipherTest < MiniTest::Unit::TestCase
     end
 
   end
+  
+  def test_initialization_vector_not_a_string
+    cipher = PolarSSL::Cipher.new("AES-128-CTR")
+    
+    assert_raises TypeError do
+      cipher.reset(nil)
+    end
+  end
 
   def test_unsupported_key
 
