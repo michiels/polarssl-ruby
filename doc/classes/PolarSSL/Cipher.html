@@ -47,13 +47,19 @@
 <pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;polarssl&#39;</span>
 <span class="ruby-identifier">require</span> <span class="ruby-string">&#39;base64&#39;</span>
 
+<span class="ruby-identifier">my_iv</span> = <span class="ruby-constant">SecureRandom</span>.<span class="ruby-identifier">random_bytes</span>(<span class="ruby-value">16</span>)
+
 <span class="ruby-identifier">cipher</span> = <span class="ruby-constant">PolarSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">Cipher</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;AES-128-CTR&quot;</span>)
+<span class="ruby-identifier">cipher</span>.<span class="ruby-identifier">reset</span>(<span class="ruby-identifier">my_iv</span>)
 <span class="ruby-identifier">cipher</span>.<span class="ruby-identifier">setkey</span>(<span class="ruby-string">&quot;mykey&quot;</span>, <span class="ruby-value">128</span>, <span class="ruby-constant">PolarSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">Cipher</span><span class="ruby-operator">::</span><span class="ruby-constant">OPERATION_ENCRYPT</span>)
 <span class="ruby-identifier">cipher</span>.<span class="ruby-identifier">update</span>(<span class="ruby-string">&quot;secret stuff I want encrypted&quot;</span>)
 <span class="ruby-identifier">encrypted_data</span> = <span class="ruby-identifier">cipher</span>.<span class="ruby-identifier">finish</span>()
 
 <span class="ruby-identifier">encoded_encrypted_data</span> = <span class="ruby-constant">Base64</span>.<span class="ruby-identifier">encode64</span>(<span class="ruby-identifier">encrypted_data</span>)
+<span class="ruby-identifier">encoded_iv</span> = <span class="ruby-constant">Base64</span>.<span class="ruby-identifier">encode64</span>(<span class="ruby-identifier">my_iv</span>)
+
 <span class="ruby-identifier">puts</span> <span class="ruby-identifier">encoded_encrypted_data</span>
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">encoded_iv</span>
 </pre>
 
 <h2 id="label-When+you+get+an+exception">When you get an exception</h2>
@@ -121,6 +127,11 @@ NULL</pre>
       
         <li>
           <span class="type">CLASS</span>
+          <a href="Cipher/BadInputData.html">PolarSSL::Cipher::BadInputData</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
           <a href="Cipher/Error.html">PolarSSL::Cipher::Error</a>
         </li>
       
@@ -157,6 +168,18 @@ NULL</pre>
               
               <li>
                 <a href="#method-c-new">new</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>R</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-reset">reset</a>
               </li>
             
           </ul>
@@ -282,28 +305,31 @@ href="https://github.com/michiels/polarssl-ruby/wiki/Using-PolarSSL::Cipher">git
               <div id="method-c-new_source" class="dyn-source">
                 <pre>VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 {
-  rb_cipher_t *rb_cipher;
-  char *cipher_type_str;
-  const cipher_info_t *cipher_info;
-  int ret;
+    rb_cipher_t *rb_cipher;
+    char *cipher_type_str;
+    const cipher_info_t *cipher_info;
+    int ret;
+    
+    Check_Type( cipher_type, T_STRING );
 
-  cipher_type_str = StringValueCStr( cipher_type );
+    cipher_type_str = StringValueCStr( cipher_type );
 
-  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+    Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  cipher_info = cipher_info_from_string( cipher_type_str );
+    cipher_info = cipher_info_from_string( cipher_type_str );
 
-  if (cipher_info == NULL)
-  {
-    rb_raise(e_UnsupportedCipher, &quot;%s is not a supported cipher&quot;, cipher_type_str );
-  }
-  else {
-    ret = cipher_init_ctx( rb_cipher-&gt;ctx, cipher_info );
-    if ( ret &lt; 0 )
-      rb_raise( e_CipherError, &quot;PolarSSL error: -0x%x&quot;, -ret );
-  }
+    if (cipher_info == NULL)
+    {
+        rb_raise(e_UnsupportedCipher, &quot;%s is not a supported cipher&quot;, cipher_type_str );
+    }
+    else 
+    {
+        ret = cipher_init_ctx( rb_cipher-&gt;ctx, cipher_info );
+        if ( ret &lt; 0 )
+            rb_raise( e_CipherError, &quot;PolarSSL error: -0x%x&quot;, -ret );
+    }
 
-  return self;
+    return self;
 }</pre>
               </div>
             </div>
@@ -360,6 +386,66 @@ returns the encrypted data.</p>
           </div>
         
         <div class="method">
+          <div class="title method-title" id="method-i-reset">
+            
+              <b>reset(initialization_vector)
+</b>
+            
+            <a href="../../classes/PolarSSL/Cipher.html#method-i-reset" name="method-i-reset" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Sets or resets the initialization vector for the cipher. An initialization
+vector is used to “randomize” the output ciphertext so attackers cannot
+guess your data based on a partially decrypted data.</p>
+
+<p>This method needs to be called before you run the first <a
+href="Cipher.html#method-i-update">update</a>.</p>
+
+<p>One option to generate a random initialization vector is by using
+SecureRandom.random_bytes. Store this initialization vector with the
+ciphertext and you&#39;ll easily able to decrypt the ciphertext.</p>
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-reset_source')" id="l_method-i-reset_source">show</a>
+                
+              </p>
+              <div id="method-i-reset_source" class="dyn-source">
+                <pre>VALUE rb_cipher_reset( VALUE self, VALUE initialization_vector )
+{
+    rb_cipher_t *rb_cipher;
+    unsigned char *iv;
+    int ret;
+    
+    Check_Type( initialization_vector, T_STRING );
+    
+    iv = (unsigned char *) StringValueCStr( initialization_vector );
+    
+    Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+    
+    ret = cipher_reset( rb_cipher-&gt;ctx, iv );
+    
+    if ( ret &lt; 0 )
+        rb_raise( e_BadInputData, &quot;Either the cipher type, key or initialization vector was not set.&quot; );
+    
+    return Qtrue;
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
           <div class="title method-title" id="method-i-setkey">
             
               <b>setkey(key, key_length, operation)
@@ -395,17 +481,21 @@ cipher.setkey(&#39;mykey&#39;, 128, PolarSSL::Cipher::OPERATION_ENCRYPT)</pre>
               <div id="method-i-setkey_source" class="dyn-source">
                 <pre>VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation )
 {
-  rb_cipher_t *rb_cipher;
-  int ret;
+    rb_cipher_t *rb_cipher;
+    int ret;
+    
+    Check_Type( key, T_STRING );
+    Check_Type( key_length, T_FIXNUM );
+    Check_Type( operation, T_FIXNUM );
 
-  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+    Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  ret = cipher_setkey( rb_cipher-&gt;ctx, (const unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
+    ret = cipher_setkey( rb_cipher-&gt;ctx, (const unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
 
-  if (ret &lt; 0)
-    rb_raise( e_CipherError, &quot;PolarSSL error: -0x%x&quot;, -ret );
+    if ( ret &lt; 0 )
+        rb_raise( e_CipherError, &quot;PolarSSL error: -0x%x&quot;, -ret );
 
-  return Qtrue;
+    return Qtrue;
 }</pre>
               </div>
             </div>
@@ -444,6 +534,8 @@ cipher.setkey(&#39;mykey&#39;, 128, PolarSSL::Cipher::OPERATION_ENCRYPT)</pre>
   rb_cipher_t *rb_cipher;
   char *input;
   int ret;
+  
+  Check_Type( rb_input, T_STRING );
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
