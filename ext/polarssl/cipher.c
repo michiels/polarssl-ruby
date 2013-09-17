@@ -30,9 +30,11 @@ VALUE rb_cipher_initialize();
 VALUE rb_cipher_setkey();
 VALUE rb_cipher_update();
 VALUE rb_cipher_finish();
+VALUE rb_cipher_reset();
 void  rb_cipher_free();
 
 VALUE e_UnsupportedCipher;
+VALUE e_BadInputData;
 VALUE e_CipherError;
 
 typedef struct
@@ -54,13 +56,19 @@ void Init_cipher(void)
       *   require 'polarssl'
       *   require 'base64'
       *
+      *   my_iv = SecureRandom.random_bytes(16)
+      *
       *   cipher = PolarSSL::Cipher.new("AES-128-CTR")
+      *   cipher.reset(my_iv)
       *   cipher.setkey("mykey", 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
       *   cipher.update("secret stuff I want encrypted")
       *   encrypted_data = cipher.finish()
       *
       *   encoded_encrypted_data = Base64.encode64(encrypted_data)
+      *   encoded_iv = Base64.encode64(my_iv)
+      *
       *   puts encoded_encrypted_data
+      *   puts encoded_iv
       *
       * == When you get an exception
       *
@@ -123,6 +131,12 @@ void Init_cipher(void)
      * Raised when you do not pass a supported cipher type to PolarSSL::Cipher.new()
      */
     e_UnsupportedCipher = rb_define_class_under( cCipher, "UnsupportedCipher", rb_eStandardError );
+    
+    /* Document-class: PolarSSL::Cipher::BadInputData
+     * Raised when the input data for the cipher was incorrect. If you get 
+     * this exception, please file a bug report.
+     */
+     e_BadInputData = rb_define_class_under( cCipher, "BadInputData", rb_eStandardError );
 
     /* Document-class: PolarSSL::Cipher::Error
      * Raised when the PolarSSL library throws a certain Cipher error code
@@ -134,22 +148,23 @@ void Init_cipher(void)
     rb_define_method( cCipher, "setkey", rb_cipher_setkey, 3 );
     rb_define_method( cCipher, "update", rb_cipher_update, 1 );
     rb_define_method( cCipher, "finish", rb_cipher_finish, 0 );
+    rb_define_method( cCipher, "reset", rb_cipher_reset, 1 );
 }
 
 VALUE rb_cipher_allocate( VALUE klass )
 {
-  rb_cipher_t *rb_cipher;
+    rb_cipher_t *rb_cipher;
 
-  rb_cipher = ALLOC( rb_cipher_t );
-  memset( rb_cipher, 0, sizeof( rb_cipher_t) );
+    rb_cipher = ALLOC( rb_cipher_t );
+    memset( rb_cipher, 0, sizeof( rb_cipher_t ) );
 
-  rb_cipher->olen = 0;
-  rb_cipher->input_length = 0;
+    rb_cipher->olen = 0;
+    rb_cipher->input_length = 0;
 
-  rb_cipher->ctx = ALLOC( cipher_context_t );
-  memset( rb_cipher->ctx, 0, sizeof( cipher_context_t ) );
+    rb_cipher->ctx = ALLOC( cipher_context_t );
+    memset( rb_cipher->ctx, 0, sizeof( cipher_context_t ) );
 
-  return Data_Wrap_Struct( klass, 0, rb_cipher_free, rb_cipher );
+    return Data_Wrap_Struct( klass, 0, rb_cipher_free, rb_cipher );
 }
 
 /*
@@ -161,30 +176,66 @@ VALUE rb_cipher_allocate( VALUE klass )
  */
 VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 {
-  rb_cipher_t *rb_cipher;
-  char *cipher_type_str;
-  const cipher_info_t *cipher_info;
-  int ret;
+    rb_cipher_t *rb_cipher;
+    char *cipher_type_str;
+    const cipher_info_t *cipher_info;
+    int ret;
+    
+    Check_Type( cipher_type, T_STRING );
 
-  cipher_type_str = StringValueCStr( cipher_type );
+    cipher_type_str = StringValueCStr( cipher_type );
 
-  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+    Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  cipher_info = cipher_info_from_string( cipher_type_str );
+    cipher_info = cipher_info_from_string( cipher_type_str );
 
-  if (cipher_info == NULL)
-  {
-    rb_raise(e_UnsupportedCipher, "%s is not a supported cipher", cipher_type_str );
-  }
-  else {
-    ret = cipher_init_ctx( rb_cipher->ctx, cipher_info );
-    if ( ret < 0 )
-      rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
-  }
+    if (cipher_info == NULL)
+    {
+        rb_raise(e_UnsupportedCipher, "%s is not a supported cipher", cipher_type_str );
+    }
+    else 
+    {
+        ret = cipher_init_ctx( rb_cipher->ctx, cipher_info );
+        if ( ret < 0 )
+            rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
+    }
 
-  return self;
+    return self;
 }
 
+/*
+ *  call-seq: reset(initialization_vector)
+ *
+ *  Sets or resets the initialization vector for the cipher. An initialization
+ *  vector is used to "randomize" the output ciphertext so attackers cannot
+ *  guess your data based on a partially decrypted data.
+ *
+ *  This method needs to be called before you run the first #update.
+ *
+ *  One option to generate a random initialization vector is by using
+ *  SecureRandom.random_bytes. Store this initialization vector with the
+ *  ciphertext and you'll easily able to decrypt the ciphertext.
+ * 
+ */
+VALUE rb_cipher_reset( VALUE self, VALUE initialization_vector )
+{
+    rb_cipher_t *rb_cipher;
+    unsigned char *iv;
+    int ret;
+    
+    Check_Type( initialization_vector, T_STRING );
+    
+    iv = (unsigned char *) StringValueCStr( initialization_vector );
+    
+    Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+    
+    ret = cipher_reset( rb_cipher->ctx, iv );
+    
+    if ( ret < 0 )
+        rb_raise( e_BadInputData, "Either the cipher type, key or initialization vector was not set." );
+    
+    return Qtrue;
+}
 
 /*
  *  call-seq: setkey(key, key_length, operation)
@@ -200,17 +251,21 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
  */
 VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation )
 {
-  rb_cipher_t *rb_cipher;
-  int ret;
+    rb_cipher_t *rb_cipher;
+    int ret;
+    
+    Check_Type( key, T_STRING );
+    Check_Type( key_length, T_FIXNUM );
+    Check_Type( operation, T_FIXNUM );
 
-  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+    Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-  ret = cipher_setkey( rb_cipher->ctx, (const unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
+    ret = cipher_setkey( rb_cipher->ctx, (const unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
 
-  if (ret < 0)
-    rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
+    if ( ret < 0 )
+        rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
 
-  return Qtrue;
+    return Qtrue;
 }
 
 /*
@@ -224,6 +279,8 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input )
   rb_cipher_t *rb_cipher;
   char *input;
   int ret;
+  
+  Check_Type( rb_input, T_STRING );
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 

@@ -1,47 +1,74 @@
 require 'test_helper'
 require 'base64'
-
+require 'securerandom'
 
 class CipherTest < MiniTest::Unit::TestCase
 
   def test_aes_128_ctr_encrypt
+    # These are hex-formatted strings that come from NIST Special Publication 800-38A 2001 Edition:
+    # Recommendation for Block Cipher Modes of Operation, Methods and Techniques by Morris Dworkin.
+    key = hex_to_bin("2b7e151628aed2a6abf7158809cf4f3c")
+    iv = hex_to_bin("f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff")
+    input = hex_to_bin("6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e51")
+    should_encrypt_as = hex_to_bin("874d6191b620e3261bef6864990db6ce9806f66b7970fdff8617187bb9fffdff")
+    
     cipher = PolarSSL::Cipher.new("AES-128-CTR")
-
-    cipher.setkey("1234567890123456", 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
-    cipher.update("Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Sed posuere consectetur est at lobortis. Curabitur blandit tempus porttitor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed posuere consectetur est at lobortis.")
+    cipher.setkey(key, 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
+    cipher.reset(iv)
+    cipher.update(input)
     encrypted = cipher.finish
 
-    encrypted_base64 = Base64.encode64(encrypted)
-
-    assert !encrypted.nil?
-    assert !encrypted_base64.nil?
-
-    should_encrypt_as = <<EOF
-nsDrK6JHaPXC8janRLIODtJfY8K6d+OfHQSSsdUSW/rDmzJ9GT1YeTllMPMA
-MSKpyxi3BT8mLY+sR/cC+ElxAS5GSiiqrZ/D99WcqgNHwNNeXgTwghWZX9w3
-rk+t6S5qwMs7aXoIZ+Hw/0Vb2IhLLcUA7V1ei3XHsdJ6XvVN8JhbuIkHrkVL
-Cxn/UlDdNXk23dORm878TyvQ9839FBT80zflSyYjsHCj43HxC6KBg7lPNeEz
-3swWwri2g2odFJojm0Mp0PS+bKFDgu+pXvGrCon5Fhy4nPJyFl73TvThF+w9
-2FRm/A7Vb5U75wJAzv6FQZQSwfsACVLWPpuHiR7fV7Uyc2VIV2yOpaI9d3Ix
-1neY3ANZhqZxWJ03MqrS/zzahJTJ16JbpyIvTTwoVoZWBe9ypuGO7uPrN7da
-+kw=
-EOF
-  assert_equal should_encrypt_as, encrypted_base64
+    assert_equal should_encrypt_as, encrypted    
+  end
+  
+  def test_aes_128_ctr_decrypt
+    key = hex_to_bin("2b7e151628aed2a6abf7158809cf4f3c")
+    iv = hex_to_bin("f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff")
+    input = hex_to_bin("874d6191b620e3261bef6864990db6ce")
+    should_decrypt_as = hex_to_bin("6bc1bee22e409f96e93d7e117393172a")
+    
+    cipher = PolarSSL::Cipher.new("AES-128-CTR")
+    cipher.setkey(key, 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
+    cipher.reset(iv)
+    cipher.update(input)
+    decrypted = cipher.finish
+    
+    assert_equal should_decrypt_as, decrypted
   end
 
   def test_unsupported_cipher
+
     assert_raises PolarSSL::Cipher::UnsupportedCipher do
       PolarSSL::Cipher.new("meh")
     end
+
+  end
+  
+  def test_initialization_vector_not_a_string
+    cipher = PolarSSL::Cipher.new("AES-128-CTR")
+    
+    assert_raises TypeError do
+      cipher.reset(nil)
+    end
   end
 
-  def test_wrong_key_data
+  def test_unsupported_key
 
     assert_raises PolarSSL::Cipher::Error do
       cipher = PolarSSL::Cipher.new("AES-128-CTR")
       cipher.setkey("1234567890123456", 127, PolarSSL::Cipher::OPERATION_ENCRYPT)
     end
 
+  end
+  
+  private
+  
+  def hex_to_bin(hex)
+    hex.scan(/../).map { |x| x.hex.chr }.join
+  end
+  
+  def bin_to_hex(data)
+    data.each_byte.map { |b| b.to_s(16).join }
   end
 
 end
