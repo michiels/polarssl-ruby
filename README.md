@@ -57,7 +57,7 @@ socket.close
 ssl.close
 ```
 
-### Encrypting data
+### Encrypting or decrypting data
 
 The `PolarSSL::Cipher` class lets you encrypt data with a wide range of
 encryption standards like AES, Blowfish and DES.
@@ -75,6 +75,9 @@ encrypted_data = cipher.finish
 
 encoded_encrypted_data = Base64.encode64(encrypted_data)
 ```
+
+See the documentation for the `Cipher` class in the [API documentation](http://michiels.github.io/polarssl-ruby/doc) 
+for all the available options.
 
 ## Contributing
 
