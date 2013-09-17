@@ -34,6 +34,7 @@ VALUE rb_cipher_reset();
 void  rb_cipher_free();
 
 VALUE e_UnsupportedCipher;
+VALUE e_BadInputData;
 VALUE e_CipherError;
 
 typedef struct
@@ -124,6 +125,12 @@ void Init_cipher(void)
      * Raised when you do not pass a supported cipher type to PolarSSL::Cipher.new()
      */
     e_UnsupportedCipher = rb_define_class_under( cCipher, "UnsupportedCipher", rb_eStandardError );
+    
+    /* Document-class: PolarSSL::Cipher::BadInputData
+     * Raised when the input data for the cipher was incorrect. If you get 
+     * this exception, please file a bug report.
+     */
+     e_BadInputData = rb_define_class_under( cCipher, "BadInputData", rb_eStandardError );
 
     /* Document-class: PolarSSL::Cipher::Error
      * Raised when the PolarSSL library throws a certain Cipher error code
@@ -136,20 +143,6 @@ void Init_cipher(void)
     rb_define_method( cCipher, "update", rb_cipher_update, 1 );
     rb_define_method( cCipher, "finish", rb_cipher_finish, 0 );
     rb_define_method( cCipher, "reset", rb_cipher_reset, 1 );
-}
-
-VALUE rb_cipher_reset( VALUE self, VALUE initialization_vector )
-{
-    rb_cipher_t *rb_cipher;
-    unsigned char *iv;
-    
-    iv = (unsigned char *) StringValueCStr( initialization_vector );
-    
-    Data_Get_Struct( self, rb_cipher_t, rb_cipher );
-    
-    cipher_reset( rb_cipher->ctx, iv );
-    
-    return Qtrue;
 }
 
 VALUE rb_cipher_allocate( VALUE klass )
@@ -202,6 +195,30 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
     return self;
 }
 
+/*
+ *  call-seq: reset(initialization_vector)
+ *
+ *  Sets or resets the initialization vector for this cipher. 
+ */
+VALUE rb_cipher_reset( VALUE self, VALUE initialization_vector )
+{
+    rb_cipher_t *rb_cipher;
+    unsigned char *iv;
+    int ret;
+    
+    Check_Type( initialization_vector, T_STRING );
+    
+    iv = (unsigned char *) StringValueCStr( initialization_vector );
+    
+    Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+    
+    ret = cipher_reset( rb_cipher->ctx, iv );
+    
+    if ( ret < 0 )
+        rb_raise( e_BadInputData, "Either the cipher type, key or initialization vector was not set." );
+    
+    return Qtrue;
+}
 
 /*
  *  call-seq: setkey(key, key_length, operation)
@@ -224,8 +241,8 @@ VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation
 
     ret = cipher_setkey( rb_cipher->ctx, (const unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
 
-    if (ret < 0)
-    rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
+    if ( ret < 0 )
+        rb_raise( e_CipherError, "PolarSSL error: -0x%x", -ret );
 
     return Qtrue;
 }
