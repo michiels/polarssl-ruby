@@ -597,7 +597,8 @@ connection to act as a server or a client. Possible values are:</p>
           
             <div class="description">
               <p>Sets the random number generator to be used for this connection. You need
-to use an instance of PolarSSL::CtrDrbg for this. Example:</p>
+to use an instance of <a href="CtrDrbg.html">PolarSSL::CtrDrbg</a> for
+this. Example:</p>
 
 <pre>entropy = PolarSSL::Entropy.new
 ctr_drbg = PolarSSL::CtrDrbg.new(entropy)

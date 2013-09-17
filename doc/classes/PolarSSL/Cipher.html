@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title>PolarSSL::Cipher</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../../css/reset.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="../../css/github.css" type="text/css" media="screen" />
+<script src="../../js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/jquery-effect.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/main.js" type="text/javascript" charset="utf-8"></script>
+<script src="../../js/highlight.pack.js" type="text/javascript" charset="utf-8"></script>
+
+</head>
+
+<body>     
+    <div class="banner">
+        
+        <h1>
+            <span class="type">Class</span> 
+            PolarSSL::Cipher 
+            
+                <span class="parent">&lt; 
+                    
+                    Object
+                    
+                </span>
+            
+        </h1>
+        <ul class="files">
+            
+            <li><a href="../../files/ext/polarssl/polarssl_c.html">ext/polarssl/polarssl.c</a></li>
+            
+        </ul>
+    </div>
+    <div id="bodyContent">
+        <div id="content">
+  
+    <div class="description">
+      
+<p>This class lets you encrypt and decrypt data.</p>
+
+<h2 id="label-Example">Example</h2>
+
+<pre class="ruby"><span class="ruby-identifier">require</span> <span class="ruby-string">&#39;polarssl&#39;</span>
+<span class="ruby-identifier">require</span> <span class="ruby-string">&#39;base64&#39;</span>
+
+<span class="ruby-identifier">cipher</span> = <span class="ruby-constant">PolarSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">Cipher</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;AES-128-CTR&quot;</span>)
+<span class="ruby-identifier">cipher</span>.<span class="ruby-identifier">setkey</span>(<span class="ruby-string">&quot;mykey&quot;</span>, <span class="ruby-value">128</span>, <span class="ruby-constant">PolarSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">Cipher</span><span class="ruby-operator">::</span><span class="ruby-constant">OPERATION_ENCRYPT</span>)
+<span class="ruby-identifier">cipher</span>.<span class="ruby-identifier">update</span>(<span class="ruby-string">&quot;secret stuff I want encrypted&quot;</span>)
+<span class="ruby-identifier">encrypted_data</span> = <span class="ruby-identifier">cipher</span>.<span class="ruby-identifier">finish</span>()
+
+<span class="ruby-identifier">encoded_encrypted_data</span> = <span class="ruby-constant">Base64</span>.<span class="ruby-identifier">encode64</span>(<span class="ruby-identifier">encrypted_data</span>)
+<span class="ruby-identifier">puts</span> <span class="ruby-identifier">encoded_encrypted_data</span>
+</pre>
+
+<h2 id="label-When+you+get+an+exception">When you get an exception</h2>
+
+<p>When using the <a href="Cipher.html">Cipher</a> class, you might get an
+exception. Some exeptions return a <a href="../PolarSSL.html">PolarSSL</a>
+error code, like <a href="Cipher/Error.html">PolarSSL::Cipher::Error</a>.</p>
+
+<p>These error codes are directly passed on from the <a
+href="../PolarSSL.html">PolarSSL</a> library and you can look up what they
+mean in the <a href="../PolarSSL.html">PolarSSL</a> API documentation at:
+<a href="https://polarssl.org/api/.">polarssl.org/api/.</a></p>
+
+<h2 id="label-Supported+Cipher+types%3A">Supported <a href="Cipher.html">Cipher</a> types:</h2>
+
+<pre>CAMELLIA-128-CBC
+CAMELLIA-192-CBC
+CAMELLIA-256-CBC
+
+CAMELLIA-128-CFB128
+CAMELLIA-192-CFB128
+CAMELLIA-256-CFB128
+
+CAMELLIA-128-CTR
+CAMELLIA-192-CTR
+CAMELLIA-256-CTR
+
+AES-128-CBC
+AES-192-CBC
+AES-256-CBC
+
+AES-128-CFB128
+AES-192-CFB128
+AES-256-CFB128
+
+AES-128-CTR
+AES-192-CTR
+AES-256-CTR
+
+DES-CBC
+DES-EDE-CBC
+DES-EDE3-CBC
+
+BLOWFISH-CBC
+BLOWFISH-CFB64
+BLOWFISH-CTR
+
+NULL</pre>
+
+    </div>
+  
+
+
+  
+
+
+  
+  
+
+
+  
+    <!-- Namespace -->
+    <div class="sectiontitle">Namespace</div>
+    <ul>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Cipher/Error.html">PolarSSL::Cipher::Error</a>
+        </li>
+      
+        <li>
+          <span class="type">CLASS</span>
+          <a href="Cipher/UnsupportedCipher.html">PolarSSL::Cipher::UnsupportedCipher</a>
+        </li>
+      
+    </ul>
+  
+
+
+  
+    <!-- Method ref -->
+    <div class="sectiontitle">Methods</div>
+    <dl class="methods">
+      
+        <dt>F</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-finish">finish</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>N</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-c-new">new</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>S</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-setkey">setkey</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+        <dt>U</dt>
+        <dd>
+          <ul>
+            
+              
+              <li>
+                <a href="#method-i-update">update</a>
+              </li>
+            
+          </ul>
+        </dd>
+      
+    </dl>
+  
+
+  
+
+
+
+  
+
+    
+
+    
+
+    
+      <!-- Section constants -->
+      <div class="sectiontitle">Constants</div>
+      <table border='0' cellpadding='5'>
+        
+          <tr valign='top'>
+            <td class="attr-name">OPERATION_ENCRYPT</td>
+            <td>=</td>
+            <td class="attr-value">1</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Use cipher for encryption</p></td>
+            </tr>
+          
+        
+          <tr valign='top'>
+            <td class="attr-name">OPERATION_DECRYPT</td>
+            <td>=</td>
+            <td class="attr-value">0</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Use cipher for decryption</p></td>
+            </tr>
+          
+        
+          <tr valign='top'>
+            <td class="attr-name">OPERATION_NONE</td>
+            <td>=</td>
+            <td class="attr-value">-1</td>
+          </tr>
+          
+            <tr valign='top'>
+              <td>&nbsp;</td>
+              <td colspan="2" class="attr-desc"><p>Don&#39;t use cipher for anything</p></td>
+            </tr>
+          
+        
+      </table>
+    
+
+
+    
+
+
+    <!-- Methods -->
+    
+      <div class="sectiontitle">Class Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-c-new">
+            
+              <b>new(cipher_type)
+</b>
+            
+            <a href="../../classes/PolarSSL/Cipher.html#method-c-new" name="method-c-new" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Initializes a new <a href="Cipher.html">Cipher</a> object to encrypt data
+with. For supported cipher types, see: <a
+href="https://github.com/michiels/polarssl-ruby/wiki/Using-PolarSSL::Cipher">github.com/michiels/polarssl-ruby/wiki/Using-PolarSSL::Cipher</a></p>
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-c-new_source')" id="l_method-c-new_source">show</a>
+                
+              </p>
+              <div id="method-c-new_source" class="dyn-source">
+                <pre>VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
+{
+  rb_cipher_t *rb_cipher;
+  char *cipher_type_str;
+  const cipher_info_t *cipher_info;
+  int ret;
+
+  cipher_type_str = StringValueCStr( cipher_type );
+
+  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+
+  cipher_info = cipher_info_from_string( cipher_type_str );
+
+  if (cipher_info == NULL)
+  {
+    rb_raise(e_UnsupportedCipher, &quot;%s is not a supported cipher&quot;, cipher_type_str );
+  }
+  else {
+    ret = cipher_init_ctx( rb_cipher-&gt;ctx, cipher_info );
+    if ( ret &lt; 0 )
+      rb_raise( e_CipherError, &quot;PolarSSL error: -0x%x&quot;, -ret );
+  }
+
+  return self;
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+                  
+      <div class="sectiontitle">Instance Public methods</div>
+      
+        <div class="method">
+          <div class="title method-title" id="method-i-finish">
+            
+              <b>finish()
+</b>
+            
+            <a href="../../classes/PolarSSL/Cipher.html#method-i-finish" name="method-i-finish" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Finishes encrypting the data added by one or multiple update() calls and
+returns the encrypted data.</p>
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-finish_source')" id="l_method-i-finish_source">show</a>
+                
+              </p>
+              <div id="method-i-finish_source" class="dyn-source">
+                <pre>VALUE rb_cipher_finish( VALUE self )
+{
+  rb_cipher_t *rb_cipher;
+  int ret;
+
+  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+
+  ret = cipher_finish( rb_cipher-&gt;ctx, rb_cipher-&gt;output, &amp;rb_cipher-&gt;olen );
+
+  if (ret &lt; 0)
+    rb_raise( e_CipherError, &quot;PolarSSL error: -0x%x&quot;, -ret );
+
+  return rb_str_new( (const char *) rb_cipher-&gt;output, rb_cipher-&gt;input_length );
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-setkey">
+            
+              <b>setkey(key, key_length, operation)
+</b>
+            
+            <a href="../../classes/PolarSSL/Cipher.html#method-i-setkey" name="method-i-setkey" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Sets the key to be used for encrypting/decrypting this cipher. The key,
+key_length and operation depend on which cipher you are using. For example,
+when using AES-128-CTR you would use something like:</p>
+
+<pre>cipher = PolarSSL::Cipher.new(&#39;AES-128-CTR&#39;)
+cipher.setkey(&#39;mykey&#39;, 128, PolarSSL::Cipher::OPERATION_ENCRYPT)</pre>
+
+<p>for both encryping and decrypting your cipher.</p>
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-setkey_source')" id="l_method-i-setkey_source">show</a>
+                
+              </p>
+              <div id="method-i-setkey_source" class="dyn-source">
+                <pre>VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation )
+{
+  rb_cipher_t *rb_cipher;
+  int ret;
+
+  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+
+  ret = cipher_setkey( rb_cipher-&gt;ctx, (const unsigned char *) StringValueCStr( key ), FIX2INT( key_length ), NUM2INT( operation ) );
+
+  if (ret &lt; 0)
+    rb_raise( e_CipherError, &quot;PolarSSL error: -0x%x&quot;, -ret );
+
+  return Qtrue;
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-update">
+            
+              <b>update(input)
+</b>
+            
+            <a href="../../classes/PolarSSL/Cipher.html#method-i-update" name="method-i-update" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Adds input to your cipher.</p>
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-update_source')" id="l_method-i-update_source">show</a>
+                
+              </p>
+              <div id="method-i-update_source" class="dyn-source">
+                <pre>VALUE rb_cipher_update( VALUE self, VALUE rb_input )
+{
+  rb_cipher_t *rb_cipher;
+  char *input;
+  int ret;
+
+  Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+
+  StringValue( rb_input );
+  input = StringValuePtr( rb_input );
+
+  rb_cipher-&gt;input_length += RSTRING_LEN( rb_input );
+
+  /* Increases the output buffer so it results into the total input length so far. */
+  REALLOC_N(rb_cipher-&gt;output, unsigned char, rb_cipher-&gt;input_length);
+
+  ret = cipher_update( rb_cipher-&gt;ctx, (const unsigned char *) input, RSTRING_LEN( rb_input ), rb_cipher-&gt;output, &amp;rb_cipher-&gt;olen );
+
+  if (ret &lt; 0)
+    rb_raise( e_CipherError, &quot;PolarSSL error: -0x%x&quot;, -ret );
+
+  return Qtrue;
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+                    </div>
+
+    </div>
+  </body>
+</html>    
