@@ -150,7 +150,7 @@ VALUE rb_cipher_allocate( VALUE klass )
     rb_cipher_t *rb_cipher;
 
     rb_cipher = ALLOC( rb_cipher_t );
-    memset( rb_cipher, 0, sizeof( rb_cipher_t) );
+    memset( rb_cipher, 0, sizeof( rb_cipher_t ) );
 
     rb_cipher->olen = 0;
     rb_cipher->input_length = 0;
@@ -174,6 +174,8 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
     char *cipher_type_str;
     const cipher_info_t *cipher_info;
     int ret;
+    
+    Check_Type( cipher_type, T_STRING );
 
     cipher_type_str = StringValueCStr( cipher_type );
 
@@ -236,6 +238,10 @@ VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation
 {
     rb_cipher_t *rb_cipher;
     int ret;
+    
+    Check_Type( key, T_STRING );
+    Check_Type( key_length, T_FIXNUM );
+    Check_Type( operation, T_FIXNUM );
 
     Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
@@ -258,6 +264,8 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input )
   rb_cipher_t *rb_cipher;
   char *input;
   int ret;
+  
+  Check_Type( rb_input, T_STRING );
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
