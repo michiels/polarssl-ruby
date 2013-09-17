@@ -57,6 +57,7 @@ void Init_cipher(void)
       *   require 'base64'
       *
       *   cipher = PolarSSL::Cipher.new("AES-128-CTR")
+      *   cipher.reset(SecureRandom.random_bytes(16))
       *   cipher.setkey("mykey", 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
       *   cipher.update("secret stuff I want encrypted")
       *   encrypted_data = cipher.finish()

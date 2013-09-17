@@ -69,6 +69,7 @@ require 'polarssl'
 require 'base64'
 
 cipher = PolarSSL::Cipher.new("AES-128-CTR")
+cipher.reset(SecureRandom.random_bytes(16))
 cipher.setkey("my16bytekey23456", 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
 cipher.update("some secret message I want to keep")
 encrypted_data = cipher.finish
