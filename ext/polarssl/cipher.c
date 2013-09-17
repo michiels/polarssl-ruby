@@ -56,14 +56,19 @@ void Init_cipher(void)
       *   require 'polarssl'
       *   require 'base64'
       *
+      *   my_iv = SecureRandom.random_bytes(16)
+      *
       *   cipher = PolarSSL::Cipher.new("AES-128-CTR")
-      *   cipher.reset(SecureRandom.random_bytes(16))
+      *   cipher.reset(my_iv)
       *   cipher.setkey("mykey", 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
       *   cipher.update("secret stuff I want encrypted")
       *   encrypted_data = cipher.finish()
       *
       *   encoded_encrypted_data = Base64.encode64(encrypted_data)
+      *   encoded_iv = Base64.encode64(my_iv)
+      *
       *   puts encoded_encrypted_data
+      *   puts encoded_iv
       *
       * == When you get an exception
       *
