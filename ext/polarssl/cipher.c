@@ -200,7 +200,16 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 /*
  *  call-seq: reset(initialization_vector)
  *
- *  Sets or resets the initialization vector for this cipher. 
+ *  Sets or resets the initialization vector for the cipher. An initialization
+ *  vector is used to "randomize" the output ciphertext so attackers cannot
+ *  guess your data based on a partially decrypted data.
+ *
+ *  This method needs to be called before you run the first #update.
+ *
+ *  One option to generate a random initialization vector is by using
+ *  SecureRandom.random_bytes. Store this initialization vector with the
+ *  ciphertext and you'll easily able to decrypt the ciphertext.
+ * 
  */
 VALUE rb_cipher_reset( VALUE self, VALUE initialization_vector )
 {
