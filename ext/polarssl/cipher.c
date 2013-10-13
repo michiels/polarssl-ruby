@@ -131,9 +131,9 @@ void Init_cipher(void)
      * Raised when you do not pass a supported cipher type to PolarSSL::Cipher.new()
      */
     e_UnsupportedCipher = rb_define_class_under( cCipher, "UnsupportedCipher", rb_eStandardError );
-    
+
     /* Document-class: PolarSSL::Cipher::BadInputData
-     * Raised when the input data for the cipher was incorrect. If you get 
+     * Raised when the input data for the cipher was incorrect. If you get
      * this exception, please file a bug report.
      */
      e_BadInputData = rb_define_class_under( cCipher, "BadInputData", rb_eStandardError );
@@ -180,7 +180,7 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
     char *cipher_type_str;
     const cipher_info_t *cipher_info;
     int ret;
-    
+
     Check_Type( cipher_type, T_STRING );
 
     cipher_type_str = StringValueCStr( cipher_type );
@@ -193,7 +193,7 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
     {
         rb_raise(e_UnsupportedCipher, "%s is not a supported cipher", cipher_type_str );
     }
-    else 
+    else
     {
         ret = cipher_init_ctx( rb_cipher->ctx, cipher_info );
         if ( ret < 0 )
@@ -215,25 +215,25 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
  *  One option to generate a random initialization vector is by using
  *  SecureRandom.random_bytes. Store this initialization vector with the
  *  ciphertext and you'll easily able to decrypt the ciphertext.
- * 
+ *
  */
 VALUE rb_cipher_reset( VALUE self, VALUE initialization_vector )
 {
     rb_cipher_t *rb_cipher;
     unsigned char *iv;
     int ret;
-    
+
     Check_Type( initialization_vector, T_STRING );
-    
-    iv = (unsigned char *) StringValueCStr( initialization_vector );
-    
+
+    iv = (unsigned char *) StringValuePtr( initialization_vector );
+
     Data_Get_Struct( self, rb_cipher_t, rb_cipher );
-    
+
     ret = cipher_reset( rb_cipher->ctx, iv );
-    
+
     if ( ret < 0 )
         rb_raise( e_BadInputData, "Either the cipher type, key or initialization vector was not set." );
-    
+
     return Qtrue;
 }
 
@@ -253,7 +253,7 @@ VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation
 {
     rb_cipher_t *rb_cipher;
     int ret;
-    
+
     Check_Type( key, T_STRING );
     Check_Type( key_length, T_FIXNUM );
     Check_Type( operation, T_FIXNUM );
@@ -279,7 +279,7 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input )
   rb_cipher_t *rb_cipher;
   char *input;
   int ret;
-  
+
   Check_Type( rb_input, T_STRING );
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
