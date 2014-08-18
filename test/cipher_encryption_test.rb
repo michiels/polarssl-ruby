@@ -2,7 +2,7 @@ require 'test_helper'
 require 'base64'
 require 'securerandom'
 
-class CipherTest < MiniTest::Unit::TestCase
+class CipherTest < Minitest::Test
 
   def test_aes_128_ctr_encrypt
     # These are hex-formatted strings that come from NIST Special Publication 800-38A 2001 Edition:

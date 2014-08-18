@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class TestVerifyMiniTest < MiniTest::Unit::TestCase
+class TestVerifyMiniTest < Minitest::Test
 
   def test_truth
     assert true
