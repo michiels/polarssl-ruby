@@ -2,7 +2,7 @@ require 'test_helper'
 require 'base64'
 require 'securerandom'
 
-class CipherTest < MiniTest::Unit::TestCase
+class CipherTest < Minitest::Test
   CIPHER = 'AES-128-CTR'
   VALUE = 'test data value'
   KEY = 'bar'
