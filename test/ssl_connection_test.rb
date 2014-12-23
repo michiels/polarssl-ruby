@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'socket'
 
-class SSLConnectionTest < Minitest::Test
+class SSLConnectionTest < MiniTest::Unit::TestCase
 
   def test_simple_connection
 
