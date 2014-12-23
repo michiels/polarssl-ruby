@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class CtrDrbgTest < Minitest::Test
+class CtrDrbgTest < MiniTest::Unit::TestCase
 
   def test_new
     entropy = PolarSSL::Entropy.new
