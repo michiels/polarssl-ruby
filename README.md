@@ -28,14 +28,33 @@ With PolarSSL for Ruby, you can use SSL and cryptography functionality from Pola
 
 ## Installation
 
+PolarSSL is cryptographically signed. To be sure the gem you install hasn't been tampered with:
+
+Add my public key as a trusted certificate:
+
+
 ```
-gem install polarssl
+gem cert --add <(curl -Ls https://raw.github.com/michiels/polarssl-ruby/master/certs/michiels.pem)
 ```
+
+Then install the gem:
+
+```
+gem install polarssl -P HighSecurity
+```
+
+The `-P HighSecurity` will verify signed gems.
 
 Or in your Gemfile:
 
 ```
 gem "polarssl", "~> 1.0.1"
+```
+
+And install using:
+
+```
+bundle install --trust-policy HighSecurity
 ```
 
 ## Usage
