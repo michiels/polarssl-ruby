@@ -13,7 +13,7 @@ PolarSSL for Ruby
     <td>&lt;= 1.2.x</td><td>0.0.7</td>
   </tr>
   <tr>
-    <td>&gt;= 1.3.x</td><td>1.x.x</td>
+    <td>&gt;= 1.3.x</td><td>1.0.1</td>
   </tr>
 </table>
 
@@ -35,7 +35,7 @@ gem install polarssl
 Or in your Gemfile:
 
 ```
-gem "polarssl", "~> 1.0.0"
+gem "polarssl", "~> 1.0.1"
 ```
 
 ## Usage

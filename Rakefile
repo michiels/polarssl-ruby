@@ -34,4 +34,13 @@ Rake::ExtensionTask.new "polarssl" do |ext|
   ext.lib_dir = "lib/polarssl"
 end
 
+desc "Signs the gem"
+task :sign_gem do
+  require 'digest/sha2'
+  built_gem_path = "polarssl-#{ENV["VERSION"]}.gem"
+  checksum = Digest::SHA512.new.hexdigest(File.read(built_gem_path))
+  checksum_path = "checksum/polarssl-#{ENV["VERSION"]}.gem.sha512"
+  File.open(checksum_path, 'w' ) {|f| f.write(checksum) }
+end
+
 task default: :test
