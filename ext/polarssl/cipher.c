@@ -172,7 +172,11 @@ VALUE rb_cipher_allocate( VALUE klass )
 /*
  *  call-seq: new(cipher_type)
  *
- *  Initializes a new Cipher object to encrypt data with. For supported cipher types,
+ *  Initializes a new Cipher object to encrypt data with.
+ *
+ *    cipher = PolarSSL::Cipher.new('AES-128-CTR')
+ *
+ *  For supported cipher types,
  *  see: https://github.com/michiels/polarssl-ruby/wiki/Using-PolarSSL::Cipher
  *
  */
@@ -212,6 +216,8 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
  *  vector is used to "randomize" the output ciphertext so attackers cannot
  *  guess your data based on a partially decrypted data.
  *
+ *    cipher.set_iv("16byteiv12345678", 16)
+ *
  *  One option to generate a random initialization vector is by using
  *  SecureRandom.random_bytes. Store this initialization vector with the
  *  ciphertext and you'll easily able to decrypt the ciphertext.
@@ -241,6 +247,8 @@ VALUE rb_cipher_set_iv( VALUE self, VALUE iv_val, VALUE iv_len_val )
  *
  *  Reset the cipher context and buffers.
  *
+ *  cipher.reset()
+ *
  */
 VALUE rb_cipher_reset( VALUE self )
 {
@@ -261,8 +269,7 @@ VALUE rb_cipher_reset( VALUE self )
  *  Sets the key to be used for encrypting/decrypting this cipher. The key, key_length and operation
  *  depend on which cipher you are using. For example, when using AES-128-CTR you would use something like:
  *
- *    cipher = PolarSSL::Cipher.new('AES-128-CTR')
- *    cipher.setkey('mykey', 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
+ *    cipher.setkey('my16bytekey12345', 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
  *
  *  for both encryping and decrypting your cipher.
  *
@@ -290,6 +297,8 @@ VALUE rb_cipher_setkey( VALUE self, VALUE key, VALUE key_length, VALUE operation
  *  call-seq: update(input)
  *
  *  Adds input to your cipher.
+ *
+ *  cipher.update("Some message I want to encrypt")
  *
  */
 VALUE rb_cipher_update( VALUE self, VALUE rb_input )
@@ -322,6 +331,8 @@ VALUE rb_cipher_update( VALUE self, VALUE rb_input )
  *  call-seq: finish()
  *
  *  Finishes encrypting the data added by one or multiple update() calls and returns the encrypted data.
+ *
+ *    encrypted_ciphertext = cipher.finish()
  *
  */
 VALUE rb_cipher_finish( VALUE self )
