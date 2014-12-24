@@ -30,6 +30,7 @@ VALUE rb_cipher_initialize();
 VALUE rb_cipher_setkey();
 VALUE rb_cipher_update();
 VALUE rb_cipher_finish();
+VALUE rb_cipher_set_iv();
 VALUE rb_cipher_reset();
 void  rb_cipher_free();
 
@@ -59,7 +60,8 @@ void Init_cipher(void)
       *   my_iv = SecureRandom.random_bytes(16)
       *
       *   cipher = PolarSSL::Cipher.new("AES-128-CTR")
-      *   cipher.reset(my_iv)
+      *   cipher.set_iv(my_iv, 16)
+      *   cipher.reset
       *   cipher.setkey("mykey", 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
       *   cipher.update("secret stuff I want encrypted")
       *   encrypted_data = cipher.finish()
@@ -148,7 +150,8 @@ void Init_cipher(void)
     rb_define_method( cCipher, "setkey", rb_cipher_setkey, 3 );
     rb_define_method( cCipher, "update", rb_cipher_update, 1 );
     rb_define_method( cCipher, "finish", rb_cipher_finish, 0 );
-    rb_define_method( cCipher, "reset", rb_cipher_reset, 1 );
+    rb_define_method( cCipher, "set_iv", rb_cipher_set_iv, 2 );
+    rb_define_method( cCipher, "reset", rb_cipher_reset, 0 );
 }
 
 VALUE rb_cipher_allocate( VALUE klass )
@@ -204,35 +207,54 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
 }
 
 /*
- *  call-seq: reset(initialization_vector)
+ *  call-seq: set_iv(iv_val, iv_len_val)
  *
- *  Sets or resets the initialization vector for the cipher. An initialization
+ *  Sets the initialization vector for the cipher. An initialization
  *  vector is used to "randomize" the output ciphertext so attackers cannot
  *  guess your data based on a partially decrypted data.
  *
- *  This method needs to be called before you run the first #update.
+ *  This method needs to be called before you run #reset.
  *
  *  One option to generate a random initialization vector is by using
  *  SecureRandom.random_bytes. Store this initialization vector with the
  *  ciphertext and you'll easily able to decrypt the ciphertext.
  *
  */
-VALUE rb_cipher_reset( VALUE self, VALUE initialization_vector )
+VALUE rb_cipher_set_iv( VALUE self, VALUE iv_val, VALUE iv_len_val )
 {
+    int ret = 0;
     rb_cipher_t *rb_cipher;
     unsigned char *iv;
+    size_t iv_len;
+
+    Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+    Check_Type( iv_val, T_STRING );
+    iv = (unsigned char *) StringValuePtr( iv_val );
+    Check_Type( iv_len_val, T_FIXNUM );
+    iv_len = FIX2INT( iv_len_val );
+
+    if ( ( ret = cipher_set_iv( rb_cipher->ctx, iv, iv_len ) ) != 0 )
+        rb_raise( e_CipherError, "Failed to set IV. PolarSSL error: -0x%x", -ret );
+
+    return Qtrue;
+}
+
+/*
+ *  call-seq: reset
+ *
+ *  Finish cipher initialization.
+ *
+ *  This method needs to be called before you run the first #update.
+ */
+VALUE rb_cipher_reset( VALUE self )
+{
     int ret;
-
-    Check_Type( initialization_vector, T_STRING );
-
-    iv = (unsigned char *) StringValuePtr( initialization_vector );
+    rb_cipher_t *rb_cipher;
 
     Data_Get_Struct( self, rb_cipher_t, rb_cipher );
 
-    ret = cipher_reset( rb_cipher->ctx, iv );
-
-    if ( ret < 0 )
-        rb_raise( e_BadInputData, "Either the cipher type, key or initialization vector was not set." );
+    if ( ( ret = cipher_reset( rb_cipher->ctx ) ) != 0 )
+        rb_raise( e_CipherError, "Failed to reset cipher. PolarSSL error: -0x%x", -ret );
 
     return Qtrue;
 }

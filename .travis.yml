@@ -1,10 +1,18 @@
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libpolarssl-dev
+
+install:
+  - bundle install
+  - wget https://polarssl.org/download/polarssl-1.3.9-gpl.tgz 
+  - tar -xzvf polarssl-1.3.9-gpl.tgz
+  - cd polarssl-1.3.9 && cmake -D USE_SHARED_POLARSSL_LIBRARY:BOOL=ON . && make && sudo make install
+
 language: ruby
+
 rvm:
   - 2.0.0
   - 1.9.3
+
 notifications:
   slack:
     secure: gnM7a3r5oNA/O/+2NXDB6akdyRlio3RP0v0HCi3+/zOuph03JAWVE8u321vkDYdDUhOzWKA37FH3buUwULKjl3TBGto5DFDHh4BCT7jJyt2cLC2cZzC8Q5NZYDTUwXFlJnbWI81yZuTAG80MSrhQLRi7wZyZjWmWCQXbwIk179I=

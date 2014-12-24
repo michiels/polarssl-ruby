@@ -72,7 +72,8 @@ cipher = PolarSSL::Cipher.new("AES-128-CTR")
 
 my_iv = SecureRandom.random_bytes(16)
 
-cipher.reset(my_iv)
+cipher.set_iv(my_iv, 16)
+cipher.reset
 cipher.setkey("my16bytekey23456", 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
 cipher.update("some secret message I want to keep")
 encrypted_data = cipher.finish
