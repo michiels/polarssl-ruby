@@ -4,6 +4,17 @@ PolarSSL for Ruby
 * API documentation: http://michiels.github.io/polarssl-ruby/doc
 * RubyGems.org: http://rubygems.org/gems/polarssl
 
+<table>
+  <tr>
+    <th>PolarSSL version</th>
+    <th>Gem version</th>
+  </tr>
+  <tr>
+    <td>&lt;= 1.2.x</td><td>0.0.7</td>
+    <td>&gt;= 1.3.x</td><td>1.x.x</td>
+  </tr>
+</table>
+
 ## Description
 
 With PolarSSL for Ruby, you can use SSL and cryptography functionality from PolarSSL in your Ruby programs.
