@@ -61,7 +61,6 @@ void Init_cipher(void)
       *
       *   cipher = PolarSSL::Cipher.new("AES-128-CTR")
       *   cipher.set_iv(my_iv, 16)
-      *   cipher.reset
       *   cipher.setkey("mykey", 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
       *   cipher.update("secret stuff I want encrypted")
       *   encrypted_data = cipher.finish()
@@ -213,8 +212,6 @@ VALUE rb_cipher_initialize( VALUE self, VALUE cipher_type )
  *  vector is used to "randomize" the output ciphertext so attackers cannot
  *  guess your data based on a partially decrypted data.
  *
- *  This method needs to be called before you run #reset.
- *
  *  One option to generate a random initialization vector is by using
  *  SecureRandom.random_bytes. Store this initialization vector with the
  *  ciphertext and you'll easily able to decrypt the ciphertext.
@@ -242,9 +239,8 @@ VALUE rb_cipher_set_iv( VALUE self, VALUE iv_val, VALUE iv_len_val )
 /*
  *  call-seq: reset
  *
- *  Finish cipher initialization.
+ *  Reset the cipher context and buffers.
  *
- *  This method needs to be called before you run the first #update.
  */
 VALUE rb_cipher_reset( VALUE self )
 {
