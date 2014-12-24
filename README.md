@@ -10,6 +10,7 @@ With PolarSSL for Ruby, you can use SSL and cryptography functionality from Pola
 
 ## Features
 
+* Encrypt/decrypt data.
 * Set up encrypted SSL connections.
 
 ## Installation
@@ -73,7 +74,6 @@ cipher = PolarSSL::Cipher.new("AES-128-CTR")
 my_iv = SecureRandom.random_bytes(16)
 
 cipher.set_iv(my_iv, 16)
-cipher.reset
 cipher.setkey("my16bytekey23456", 128, PolarSSL::Cipher::OPERATION_ENCRYPT)
 cipher.update("some secret message I want to keep")
 encrypted_data = cipher.finish
@@ -82,7 +82,7 @@ encoded_encrypted_data = Base64.encode64(encrypted_data)
 encoded_iv = Base64.encode64(my_iv)
 ```
 
-See the documentation for the `Cipher` class in the [API documentation](http://michiels.github.io/polarssl-ruby/doc) 
+See the documentation for the `Cipher` class in the [API documentation](http://michiels.github.io/polarssl-ruby/doc)
 for all the available options.
 
 ## Contributing
