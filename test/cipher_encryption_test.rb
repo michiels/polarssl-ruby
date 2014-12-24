@@ -13,15 +13,13 @@ class CipherTest < MiniTest::Unit::TestCase
     cipher = PolarSSL::Cipher.new CIPHER
     cipher.setkey KEY, 128, PolarSSL::Cipher::OPERATION_ENCRYPT
     cipher.set_iv(iv, 16)
-    cipher.reset
-    cipher.update VALUE
+    cipher.update(VALUE)
     encrypted = cipher.finish
 
     cipher = PolarSSL::Cipher.new CIPHER
     cipher.setkey KEY, 128, PolarSSL::Cipher::OPERATION_DECRYPT
     cipher.set_iv(iv, 16)
-    cipher.reset
-    cipher.update encrypted
+    cipher.update(encrypted)
     decrypted = cipher.finish
 
     assert_equal VALUE, decrypted
@@ -32,7 +30,7 @@ class CipherTest < MiniTest::Unit::TestCase
       PolarSSL::Cipher.new("meh")
     end
   end
-  
+
   def test_unsupported_key
     assert_raises PolarSSL::Cipher::Error do
       cipher = PolarSSL::Cipher.new("AES-128-CTR")
