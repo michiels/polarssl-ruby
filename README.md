@@ -32,6 +32,12 @@ With PolarSSL for Ruby, you can use SSL and cryptography functionality from Pola
 gem install polarssl
 ```
 
+Or in your Gemfile:
+
+```
+gem "polarssl", "~> 1.0.0"
+```
+
 ## Usage
 
 ### Setting up a SSL connection
