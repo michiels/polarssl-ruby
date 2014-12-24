@@ -12,7 +12,7 @@ PolarSSL for Ruby
   <tr>
     <td>&lt;= 1.2.x</td><td>0.0.7</td>
   </tr>
-  <td>
+  <tr>
     <td>&gt;= 1.3.x</td><td>1.x.x</td>
   </tr>
 </table>
