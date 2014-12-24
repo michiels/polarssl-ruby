@@ -50,7 +50,7 @@
 <span class="ruby-identifier">my_iv</span> = <span class="ruby-constant">SecureRandom</span>.<span class="ruby-identifier">random_bytes</span>(<span class="ruby-value">16</span>)
 
 <span class="ruby-identifier">cipher</span> = <span class="ruby-constant">PolarSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">Cipher</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&quot;AES-128-CTR&quot;</span>)
-<span class="ruby-identifier">cipher</span>.<span class="ruby-identifier">reset</span>(<span class="ruby-identifier">my_iv</span>)
+<span class="ruby-identifier">cipher</span>.<span class="ruby-identifier">set_iv</span>(<span class="ruby-identifier">my_iv</span>, <span class="ruby-value">16</span>)
 <span class="ruby-identifier">cipher</span>.<span class="ruby-identifier">setkey</span>(<span class="ruby-string">&quot;mykey&quot;</span>, <span class="ruby-value">128</span>, <span class="ruby-constant">PolarSSL</span><span class="ruby-operator">::</span><span class="ruby-constant">Cipher</span><span class="ruby-operator">::</span><span class="ruby-constant">OPERATION_ENCRYPT</span>)
 <span class="ruby-identifier">cipher</span>.<span class="ruby-identifier">update</span>(<span class="ruby-string">&quot;secret stuff I want encrypted&quot;</span>)
 <span class="ruby-identifier">encrypted_data</span> = <span class="ruby-identifier">cipher</span>.<span class="ruby-identifier">finish</span>()
@@ -191,6 +191,11 @@ NULL</pre>
             
               
               <li>
+                <a href="#method-i-set_iv">set_iv</a>,
+              </li>
+            
+              
+              <li>
                 <a href="#method-i-setkey">setkey</a>
               </li>
             
@@ -286,7 +291,11 @@ NULL</pre>
           
             <div class="description">
               <p>Initializes a new <a href="Cipher.html">Cipher</a> object to encrypt data
-with. For supported cipher types, see: <a
+with.</p>
+
+<pre>cipher = PolarSSL::Cipher.new(&#39;AES-128-CTR&#39;)</pre>
+
+<p>For supported cipher types, see: <a
 href="https://github.com/michiels/polarssl-ruby/wiki/Using-PolarSSL::Cipher">github.com/michiels/polarssl-ruby/wiki/Using-PolarSSL::Cipher</a></p>
             </div>
           
@@ -309,7 +318,7 @@ href="https://github.com/michiels/polarssl-ruby/wiki/Using-PolarSSL::Cipher">git
     char *cipher_type_str;
     const cipher_info_t *cipher_info;
     int ret;
-    
+
     Check_Type( cipher_type, T_STRING );
 
     cipher_type_str = StringValueCStr( cipher_type );
@@ -322,7 +331,7 @@ href="https://github.com/michiels/polarssl-ruby/wiki/Using-PolarSSL::Cipher">git
     {
         rb_raise(e_UnsupportedCipher, &quot;%s is not a supported cipher&quot;, cipher_type_str );
     }
-    else 
+    else
     {
         ret = cipher_init_ctx( rb_cipher-&gt;ctx, cipher_info );
         if ( ret &lt; 0 )
@@ -351,6 +360,8 @@ href="https://github.com/michiels/polarssl-ruby/wiki/Using-PolarSSL::Cipher">git
             <div class="description">
               <p>Finishes encrypting the data added by one or multiple update() calls and
 returns the encrypted data.</p>
+
+<pre>encrypted_ciphertext = cipher.finish()</pre>
             </div>
           
           
@@ -388,7 +399,7 @@ returns the encrypted data.</p>
         <div class="method">
           <div class="title method-title" id="method-i-reset">
             
-              <b>reset(initialization_vector)
+              <b>reset
 </b>
             
             <a href="../../classes/PolarSSL/Cipher.html#method-i-reset" name="method-i-reset" class="permalink">Link</a>
@@ -396,16 +407,9 @@ returns the encrypted data.</p>
           
           
             <div class="description">
-              <p>Sets or resets the initialization vector for the cipher. An initialization
-vector is used to “randomize” the output ciphertext so attackers cannot
-guess your data based on a partially decrypted data.</p>
+              <p>Reset the cipher context and buffers.</p>
 
-<p>This method needs to be called before you run the first <a
-href="Cipher.html#method-i-update">update</a>.</p>
-
-<p>One option to generate a random initialization vector is by using
-SecureRandom.random_bytes. Store this initialization vector with the
-ciphertext and you&#39;ll easily able to decrypt the ciphertext.</p>
+<p>cipher.reset()</p>
             </div>
           
           
@@ -421,23 +425,74 @@ ciphertext and you&#39;ll easily able to decrypt the ciphertext.</p>
                 
               </p>
               <div id="method-i-reset_source" class="dyn-source">
-                <pre>VALUE rb_cipher_reset( VALUE self, VALUE initialization_vector )
+                <pre>VALUE rb_cipher_reset( VALUE self )
 {
+    int ret;
+    rb_cipher_t *rb_cipher;
+
+    Data_Get_Struct( self, rb_cipher_t, rb_cipher );
+
+    if ( ( ret = cipher_reset( rb_cipher-&gt;ctx ) ) != 0 )
+        rb_raise( e_CipherError, &quot;Failed to reset cipher. PolarSSL error: -0x%x&quot;, -ret );
+
+    return Qtrue;
+}</pre>
+              </div>
+            </div>
+            
+          </div>
+        
+        <div class="method">
+          <div class="title method-title" id="method-i-set_iv">
+            
+              <b>set_iv(iv_val, iv_len_val)
+</b>
+            
+            <a href="../../classes/PolarSSL/Cipher.html#method-i-set_iv" name="method-i-set_iv" class="permalink">Link</a>
+          </div>
+          
+          
+            <div class="description">
+              <p>Sets the initialization vector for the cipher. An initialization vector is
+used to “randomize” the output ciphertext so attackers cannot guess your
+data based on a partially decrypted data.</p>
+
+<pre>cipher.set_iv(&quot;16byteiv12345678&quot;, 16)</pre>
+
+<p>One option to generate a random initialization vector is by using
+SecureRandom.random_bytes. Store this initialization vector with the
+ciphertext and you&#39;ll easily able to decrypt the ciphertext.</p>
+            </div>
+          
+          
+          
+          
+          
+            
+            <div class="sourcecode">
+              
+              <p class="source-link">
+                Source: 
+                <a href="javascript:toggleSource('method-i-set_iv_source')" id="l_method-i-set_iv_source">show</a>
+                
+              </p>
+              <div id="method-i-set_iv_source" class="dyn-source">
+                <pre>VALUE rb_cipher_set_iv( VALUE self, VALUE iv_val, VALUE iv_len_val )
+{
+    int ret = 0;
     rb_cipher_t *rb_cipher;
     unsigned char *iv;
-    int ret;
-    
-    Check_Type( initialization_vector, T_STRING );
-    
-    iv = (unsigned char *) StringValueCStr( initialization_vector );
-    
+    size_t iv_len;
+
     Data_Get_Struct( self, rb_cipher_t, rb_cipher );
-    
-    ret = cipher_reset( rb_cipher-&gt;ctx, iv );
-    
-    if ( ret &lt; 0 )
-        rb_raise( e_BadInputData, &quot;Either the cipher type, key or initialization vector was not set.&quot; );
-    
+    Check_Type( iv_val, T_STRING );
+    iv = (unsigned char *) StringValuePtr( iv_val );
+    Check_Type( iv_len_val, T_FIXNUM );
+    iv_len = FIX2INT( iv_len_val );
+
+    if ( ( ret = cipher_set_iv( rb_cipher-&gt;ctx, iv, iv_len ) ) != 0 )
+        rb_raise( e_CipherError, &quot;Failed to set IV. PolarSSL error: -0x%x&quot;, -ret );
+
     return Qtrue;
 }</pre>
               </div>
@@ -460,8 +515,7 @@ ciphertext and you&#39;ll easily able to decrypt the ciphertext.</p>
 key_length and operation depend on which cipher you are using. For example,
 when using AES-128-CTR you would use something like:</p>
 
-<pre>cipher = PolarSSL::Cipher.new(&#39;AES-128-CTR&#39;)
-cipher.setkey(&#39;mykey&#39;, 128, PolarSSL::Cipher::OPERATION_ENCRYPT)</pre>
+<pre>cipher.setkey(&#39;my16bytekey12345&#39;, 128, PolarSSL::Cipher::OPERATION_ENCRYPT)</pre>
 
 <p>for both encryping and decrypting your cipher.</p>
             </div>
@@ -483,7 +537,7 @@ cipher.setkey(&#39;mykey&#39;, 128, PolarSSL::Cipher::OPERATION_ENCRYPT)</pre>
 {
     rb_cipher_t *rb_cipher;
     int ret;
-    
+
     Check_Type( key, T_STRING );
     Check_Type( key_length, T_FIXNUM );
     Check_Type( operation, T_FIXNUM );
@@ -514,6 +568,8 @@ cipher.setkey(&#39;mykey&#39;, 128, PolarSSL::Cipher::OPERATION_ENCRYPT)</pre>
           
             <div class="description">
               <p>Adds input to your cipher.</p>
+
+<p>cipher.update(“Some message I want to encrypt”)</p>
             </div>
           
           
@@ -534,7 +590,7 @@ cipher.setkey(&#39;mykey&#39;, 128, PolarSSL::Cipher::OPERATION_ENCRYPT)</pre>
   rb_cipher_t *rb_cipher;
   char *input;
   int ret;
-  
+
   Check_Type( rb_input, T_STRING );
 
   Data_Get_Struct( self, rb_cipher_t, rb_cipher );
