@@ -3,13 +3,14 @@ before_install:
 
 install:
   - bundle install
-  - wget https://polarssl.org/download/polarssl-1.3.9-gpl.tgz 
-  - tar -xzvf polarssl-1.3.9-gpl.tgz
-  - cd polarssl-1.3.9 && cmake -D USE_SHARED_POLARSSL_LIBRARY:BOOL=ON . && make && sudo make install
+  - curl -O https://tls.mbed.org/download/mbedtls-1.3.10-gpl.tgz
+  - tar -xzvf mbedtls-1.3.10-gpl.tgz
+  - cd mbedtls-1.3.10 && cmake -D USE_SHARED_MBEDTLS_LIBRARY:BOOL=ON . && make && sudo make install
 
 language: ruby
 
 rvm:
+  - 2.1.2
   - 2.0.0
   - 1.9.3
 
