@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.name = 'polarssl'
   s.version = PolarSSL::VERSION
   s.date = Date.today
-  s.summary = 'Use the PolarSSL cryptographic and SSL library in Ruby.'
-  s.description = 'A gem that lets you use the PolarSSL cryptography library with Ruby.'
+  s.summary = 'Use the PolarSSL (now mbed TLS) cryptographic and SSL library in Ruby.'
+  s.description = 'A gem that lets you use the PolarSSL (now mbed TLS) cryptography library with Ruby.'
   s.authors = ['Michiel Sikkes', 'Oleksandr Iuzikov']
   s.email = 'michiel.sikkes@gmail.com'
   s.files = `git ls-files`.split("\n")
