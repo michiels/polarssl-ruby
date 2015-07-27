@@ -6,14 +6,17 @@ PolarSSL for Ruby
 
 <table>
   <tr>
-    <th>PolarSSL version</th>
+    <th>PolarSSL/mbed TLS version</th>
     <th>Gem version</th>
   </tr>
   <tr>
     <td>&lt;= 1.2.x</td><td>0.0.7</td>
   </tr>
   <tr>
-    <td>&gt;= 1.3.x</td><td>1.0.1</td>
+    <td>&gt;= 1.3.0 and &lt; 1.3.10</td><td>1.0.1</td>
+  </tr>
+  <tr>
+    <td>&gt;= 1.3.10</td><td>1.0.2</td>
   </tr>
 </table>
 
@@ -48,7 +51,7 @@ The `-P HighSecurity` will verify signed gems.
 Or in your Gemfile:
 
 ```
-gem "polarssl", "~> 1.0.1"
+gem "polarssl", "~> 1.0.2"
 ```
 
 And install using:
