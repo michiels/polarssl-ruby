@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class EntropyTest < MiniTest::Unit::TestCase
+class EntropyTest < MiniTest::Test
 
   def test_initialize
     entropy = PolarSSL::Entropy.new
